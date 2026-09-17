@@ -1,9 +1,9 @@
 <div *ngIf="circuit; else notFound">
-  <a class="back" routerLink="/">← Back to all accessories</a>
+  <a class="back" routerLink="/"><app-icon name="arrow-left"></app-icon> Back to all accessories</a>
 
   <div class="title-row">
-    <p class="breadcrumb">{{ categoryName }}</p>
-    <h1>{{ circuit.name }}</h1>
+    <p class="breadcrumb"><app-icon [name]="categoryIcon"></app-icon> {{ categoryName }}</p>
+    <h1><app-icon [name]="circuit.icon ?? 'load'"></app-icon> {{ circuit.name }}</h1>
   </div>
 
   <div class="spec-row">
