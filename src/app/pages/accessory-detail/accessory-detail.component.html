@@ -1,0 +1,54 @@
+<div *ngIf="circuit; else notFound">
+  <a class="back" routerLink="/">← Back to all accessories</a>
+
+  <div class="title-row">
+    <p class="breadcrumb">{{ categoryName }}</p>
+    <h1>{{ circuit.name }}</h1>
+  </div>
+
+  <div class="spec-row">
+    <div class="spec">
+      <span class="spec-label">Wire Gauge</span>
+      <span class="spec-value">{{ circuit.wireGauge }}</span>
+    </div>
+    <div class="spec">
+      <span class="spec-label">Fuse</span>
+      <span class="spec-value">{{ circuit.fuse }}</span>
+    </div>
+  </div>
+
+  <h3>Wiring Diagram</h3>
+  <app-flow-diagram [stages]="circuit.diagram"></app-flow-diagram>
+
+  <ng-container *ngIf="circuit.groundDiagram">
+    <h3>Ground Path</h3>
+    <app-flow-diagram [stages]="circuit.groundDiagram" [ground]="true"></app-flow-diagram>
+  </ng-container>
+
+  <ng-container *ngIf="circuit.table">
+    <h3>Sizing by Load</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Item</th><th>Wire</th><th>Fuse</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of circuit.table">
+          <td>{{ row.label }}</td>
+          <td>{{ row.wire }}</td>
+          <td>{{ row.fuse }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-container>
+
+  <ng-container *ngIf="circuit.notes?.length">
+    <h3>Notes</h3>
+    <ul class="notes">
+      <li *ngFor="let note of circuit.notes">{{ note }}</li>
+    </ul>
+  </ng-container>
+</div>
+
+<ng-template #notFound>
+  <p>Accessory not found. <a routerLink="/">Go back</a>.</p>
+</ng-template>
