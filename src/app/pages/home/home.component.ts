@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CATEGORIES, CIRCUITS, Category, Circuit } from '../../data/wiring-data';
+import { IconComponent } from '../../components/icon/icon.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, IconComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

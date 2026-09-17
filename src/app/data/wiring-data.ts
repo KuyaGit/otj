@@ -1,6 +1,9 @@
+import type { IconName } from '../components/icon/icons';
+
 export interface CircuitStage {
   label: string;
   sub?: string;
+  icon?: IconName;
 }
 
 export interface Circuit {
@@ -9,6 +12,7 @@ export interface Circuit {
   category: string;
   wireGauge: string;
   fuse: string;
+  icon?: IconName;
   diagram: CircuitStage[];
   groundDiagram?: CircuitStage[];
   notes?: string[];
@@ -18,19 +22,19 @@ export interface Circuit {
 export interface Category {
   id: string;
   name: string;
-  icon: string;
+  icon: IconName;
 }
 
 export const CATEGORIES: Category[] = [
-  { id: 'core', name: 'Core / Main Feed', icon: '🔋' },
-  { id: 'starting', name: 'Starting & Ignition', icon: '🔑' },
-  { id: 'fuel', name: 'Fuel System', icon: '⛽' },
-  { id: 'lighting', name: 'Lighting', icon: '💡' },
-  { id: 'signals', name: 'Signals & Horn', icon: '🔔' },
-  { id: 'cooling', name: 'Cooling', icon: '🌀' },
-  { id: 'interior', name: 'Interior & Accessories', icon: '🎛️' },
-  { id: 'audio', name: 'Audio', icon: '🔊' },
-  { id: 'gauges', name: 'Gauges', icon: '📟' },
+  { id: 'core', name: 'Core / Main Feed', icon: 'battery' },
+  { id: 'starting', name: 'Starting & Ignition', icon: 'key' },
+  { id: 'fuel', name: 'Fuel System', icon: 'fuel' },
+  { id: 'lighting', name: 'Lighting', icon: 'bulb' },
+  { id: 'signals', name: 'Signals & Horn', icon: 'horn' },
+  { id: 'cooling', name: 'Cooling', icon: 'fan' },
+  { id: 'interior', name: 'Interior & Accessories', icon: 'dashboard' },
+  { id: 'audio', name: 'Audio', icon: 'speaker' },
+  { id: 'gauges', name: 'Gauges', icon: 'gauge' },
 ];
 
 export const CIRCUITS: Circuit[] = [
@@ -40,6 +44,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'core',
     wireGauge: '4 AWG (battery to main fuse box)',
     fuse: '60–100A main fuse',
+    icon: 'battery',
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Main battery cable', sub: '4 AWG' },
@@ -74,6 +79,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'starting',
     wireGauge: '2–4 AWG (battery to starter B+)',
     fuse: 'Usually no conventional fuse',
+    icon: 'starter',
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Heavy cable', sub: '2–4 AWG' },
@@ -91,6 +97,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'starting',
     wireGauge: '14–16 AWG (see breakdown)',
     fuse: '10–15A per sub-circuit',
+    icon: 'spark',
     diagram: [
       { label: 'Ignition switch' },
       { label: 'Ignition relay', sub: '14 AWG · 15A fuse' },
@@ -110,6 +117,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'fuel',
     wireGauge: '16–12 AWG (by pump current)',
     fuse: '7.5–20A (by pump current)',
+    icon: 'pump',
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Fuse', sub: 'per pump size' },
@@ -130,6 +138,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'lighting',
     wireGauge: '12 AWG',
     fuse: '20A',
+    icon: 'headlight-low',
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -144,6 +153,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'lighting',
     wireGauge: '12 AWG',
     fuse: '20A',
+    icon: 'headlight-high',
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -158,6 +168,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'lighting',
     wireGauge: '16 AWG',
     fuse: '10A',
+    icon: 'taillight',
     diagram: [
       { label: 'Light switch' },
       { label: '10A fuse' },
@@ -170,6 +181,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'lighting',
     wireGauge: '16 AWG',
     fuse: '10A',
+    icon: 'brake',
     diagram: [
       { label: '10A fuse' },
       { label: 'Brake switch' },
@@ -182,6 +194,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'signals',
     wireGauge: '16 AWG',
     fuse: '10A (15A for hazard load)',
+    icon: 'turn-signal',
     diagram: [
       { label: '10A fuse' },
       { label: 'Flasher' },
@@ -196,6 +209,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'signals',
     wireGauge: '12 AWG',
     fuse: '20A',
+    icon: 'horn',
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -211,6 +225,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'cooling',
     wireGauge: '14–10 AWG (by fan current)',
     fuse: '15–40A (by fan current)',
+    icon: 'fan',
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Fuse', sub: 'per fan size' },
@@ -231,6 +246,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'interior',
     wireGauge: '14 AWG (16 AWG for USB-only charger)',
     fuse: '15A (10A for USB-only)',
+    icon: 'socket',
     diagram: [
       { label: 'Battery (+) / switched +' },
       { label: '15A fuse' },
@@ -243,6 +259,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'interior',
     wireGauge: '18 AWG (16 AWG for multiple LEDs)',
     fuse: '5A',
+    icon: 'dome-light',
     diagram: [
       { label: 'Switched +' },
       { label: '5A fuse' },
@@ -255,6 +272,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'interior',
     wireGauge: '14 AWG',
     fuse: '15–20A',
+    icon: 'wiper',
     diagram: [
       { label: 'Battery (+) / switched +' },
       { label: '15–20A fuse' },
@@ -269,6 +287,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'audio',
     wireGauge: '16 AWG (basic stereo)',
     fuse: '10A',
+    icon: 'radio',
     diagram: [
       { label: 'Switched +' },
       { label: '10A fuse' },
@@ -281,6 +300,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'audio',
     wireGauge: '8–4 AWG (dedicated power cable)',
     fuse: 'Per amplifier spec',
+    icon: 'amplifier',
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Dedicated fuse', sub: 'per amp spec' },
@@ -294,6 +314,7 @@ export const CIRCUITS: Circuit[] = [
     category: 'gauges',
     wireGauge: '18 AWG',
     fuse: '5–10A',
+    icon: 'gauge',
     diagram: [
       { label: 'Switched +' },
       { label: '10A GAUGE fuse' },

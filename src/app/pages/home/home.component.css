@@ -7,6 +7,13 @@
 .hero h1 {
   margin: 0 0 0.4rem;
   font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.hero h1 app-icon {
+  color: var(--accent);
 }
 
 .hero p {
@@ -19,6 +26,9 @@
   font-weight: 600;
   text-decoration: none;
   font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .hero-link:hover {
@@ -37,8 +47,9 @@
   gap: 0.5rem;
 }
 
-.icon {
-  font-size: 1.2rem;
+.category h2 app-icon {
+  font-size: 1.25rem;
+  color: var(--accent);
 }
 
 .grid {
@@ -68,6 +79,13 @@
 .card-name {
   font-weight: 600;
   font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.card-name app-icon {
+  color: var(--text-dim);
 }
 
 .card-meta {

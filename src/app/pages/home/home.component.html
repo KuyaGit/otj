@@ -1,18 +1,23 @@
 <div class="hero">
-  <h1>🚙 Owner-Type Jeep Wiring Guide</h1>
+  <h1><app-icon name="jeep"></app-icon> Owner-Type Jeep Wiring Guide</h1>
   <p>12V system reference — tap any accessory to see its wiring diagram, wire gauge and fuse rating.</p>
-  <a class="hero-link" routerLink="/reference">View main architecture, fuse panel &amp; ground plan →</a>
+  <a class="hero-link" routerLink="/reference"
+    >View main architecture, fuse panel &amp; ground plan <app-icon name="chevron-right"></app-icon
+  ></a>
 </div>
 
 <div class="category" *ngFor="let cat of categories">
-  <h2><span class="icon">{{ cat.icon }}</span> {{ cat.name }}</h2>
+  <h2><app-icon [name]="cat.icon"></app-icon> {{ cat.name }}</h2>
   <div class="grid">
     <a
       class="card"
       *ngFor="let c of circuitsFor(cat.id)"
       [routerLink]="['/accessory', c.id]"
     >
-      <div class="card-name">{{ c.name }}</div>
+      <div class="card-name">
+        <app-icon [name]="c.icon ?? 'load'"></app-icon>
+        <span>{{ c.name }}</span>
+      </div>
       <div class="card-meta">
         <span>{{ c.wireGauge }}</span>
         <span class="fuse">{{ c.fuse }}</span>
