@@ -18,6 +18,14 @@
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand app-icon {
+  font-size: 1.2rem;
+  color: var(--accent);
 }
 
 .content {
