@@ -1,13 +1,13 @@
-<a class="back" routerLink="/">← Back to all accessories</a>
+<a class="back" routerLink="/"><app-icon name="arrow-left"></app-icon> Back to all accessories</a>
 <h1>Main Architecture &amp; Reference</h1>
 
-<h3>Overall Power Architecture</h3>
+<h3><app-icon name="battery"></app-icon> Overall Power Architecture</h3>
 <app-flow-diagram [stages]="mainArchitecture"></app-flow-diagram>
 
-<h3>Ground Plan</h3>
+<h3><app-icon name="ground"></app-icon> Ground Plan</h3>
 <app-flow-diagram [stages]="groundPlan" [ground]="true"></app-flow-diagram>
 
-<h3>Suggested 16-Circuit Fuse Panel</h3>
+<h3><app-icon name="fuse"></app-icon> Suggested 16-Circuit Fuse Panel</h3>
 <div class="fuse-grid">
   <div class="fuse-slot" *ngFor="let f of fusePanel">
     <div class="slot-num">{{ f.slot }}</div>
@@ -17,7 +17,7 @@
 </div>
 <p class="hint">Keep spare fuse positions available. A 100A main fuse is a possible starting point for the main feed — the correct rating depends on main cable capacity and total system design.</p>
 
-<h3>Wire Color Convention</h3>
+<h3><app-icon name="wire"></app-icon> Wire Color Convention</h3>
 <div class="color-grid">
   <div class="color-chip" *ngFor="let wc of wireColors">
     <span class="swatch" [style.background]="wc.hex"></span>
@@ -27,13 +27,13 @@
 </div>
 <p class="hint">Label both ends of every wire — do not rely on color alone.</p>
 
-<h3>Wire Type</h3>
+<h3><app-icon name="spool"></app-icon> Wire Type</h3>
 <p>Use automotive stranded copper wire rated for engine-bay/automotive temperatures. Avoid household THHN, extension-cord wire, random appliance wire, or speaker wire for power circuits. Use proper automotive terminals, heat-shrink, loom, grommets, and secure mounting.</p>
 
-<h3>Critical Fuse Principle</h3>
+<h3><app-icon name="alert"></app-icon> Critical Fuse Principle</h3>
 <p>Don't assume a fixed rule such as "12 AWG always = 20A" or "10 AWG always = 30A." Safe fuse selection depends on actual wire ampacity, wire length, voltage drop, temperature, bundling, installation location, expected continuous load, and manufacturer specifications. The fuse protects the wire and circuit — when a manufacturer specifies a fuse size, follow it unless the overall design requires a documented change.</p>
 
-<h3>Before Finalizing the Diagram — Confirm</h3>
+<h3><app-icon name="checklist"></app-icon> Before Finalizing the Diagram — Confirm</h3>
 <ol class="next-steps">
   <li *ngFor="let step of nextSteps">{{ step }}</li>
 </ol>

@@ -1,5 +1,7 @@
 .back {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   color: var(--text-dim);
   text-decoration: none;
   font-size: 0.85rem;
@@ -18,6 +20,13 @@ h1 {
 h3 {
   margin: 2rem 0 0.75rem;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+h3 app-icon {
+  color: var(--text-dim);
 }
 
 p {

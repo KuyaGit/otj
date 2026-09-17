@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FUSE_PANEL, WIRE_COLORS, NEXT_STEPS, CIRCUITS } from '../../data/wiring-data';
 import { FlowDiagramComponent } from '../../components/flow-diagram/flow-diagram.component';
+import { IconComponent } from '../../components/icon/icon.component';
 
 @Component({
   selector: 'app-reference',
   standalone: true,
-  imports: [CommonModule, RouterLink, FlowDiagramComponent],
+  imports: [CommonModule, RouterLink, FlowDiagramComponent, IconComponent],
   templateUrl: './reference.component.html',
   styleUrl: './reference.component.css',
 })
@@ -20,7 +21,7 @@ export class ReferenceComponent {
     { label: 'Battery (+)' },
     { label: 'Main fuse', sub: '60–100A' },
     { label: 'Fuse / relay panel' },
-    { label: '16 fused circuits →' },
+    { label: '16 fused circuits', icon: 'load' as const },
     { label: 'All accessories' },
   ];
 
