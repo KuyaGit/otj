@@ -1,4 +1,5 @@
 import { CIRCUITS } from './wiring-data';
+import { WIRE_IMAGES, wireImageFor } from './wire-images';
 import { MAP_NODES, MAP_ROUTES, MAP_WAYPOINTS, WAYPOINT_LABELS, connectionsFor, legPoints, wireRadius } from './jeep-map';
 
 describe('jeep-map data', () => {
@@ -97,5 +98,30 @@ describe('part details', () => {
 
   it('returns nothing for an unknown part', () => {
     expect(connectionsFor('nope')).toEqual([]);
+  });
+});
+
+describe('wire images', () => {
+  it('gives every photo the credit its licence needs', () => {
+    for (const [key, img] of Object.entries(WIRE_IMAGES)) {
+      expect(img.author).withContext(key).toBeTruthy();
+      expect(img.license).withContext(key).toBeTruthy();
+      expect(img.source.startsWith('https://commons.wikimedia.org/wiki/File:')).withContext(key).toBe(true);
+      expect(img.file.endsWith('.jpg')).withContext(key).toBe(true);
+      // CC BY and CC BY-SA need a licence link; only CC0 and public domain may leave it out
+      if (/^CC BY/.test(img.license)) expect(img.licenseUrl).withContext(key).toContain('creativecommons.org');
+    }
+  });
+
+  it('has a photo for every circuit', () => {
+    expect(CIRCUITS.filter((c) => !wireImageFor(c.id)).map((c) => c.id)).toEqual([]);
+  });
+
+  it('shares one bulb photo between low and high beam', () => {
+    expect(wireImageFor('headlight-low')).toBe(wireImageFor('headlight-high'));
+  });
+
+  it('returns nothing for an unknown circuit', () => {
+    expect(wireImageFor('nope')).toBeUndefined();
   });
 });

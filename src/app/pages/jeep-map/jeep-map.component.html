@@ -76,6 +76,18 @@
 </section>
 
 <section class="card" *ngIf="selected() as c" aria-live="polite">
+  <figure class="photo" *ngIf="image() as img">
+    <img [src]="'images/wires/' + img.file" [width]="img.width" [height]="img.height" [alt]="img.alt" loading="lazy" />
+    <figcaption>
+      Example photo: {{ img.alt }}.
+      <span class="credit"
+        >By {{ img.author }} ·
+        <a *ngIf="img.licenseUrl; else pd" [href]="img.licenseUrl" target="_blank" rel="noopener">{{ img.license }}</a>
+        <ng-template #pd>{{ img.license }}</ng-template>
+        · <a [href]="img.source" target="_blank" rel="noopener">Wikimedia Commons</a></span
+      >
+    </figcaption>
+  </figure>
   <div class="card-head">
     <h2><app-icon [name]="c.icon ?? 'load'"></app-icon> {{ c.name }}</h2>
     <a class="link" [routerLink]="['/accessory', c.id]">Open wiring diagram</a>

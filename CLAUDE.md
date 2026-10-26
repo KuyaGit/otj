@@ -45,6 +45,9 @@ and `reference` reuse it instead of duplicating diagram markup.
 `MAP_ROUTES` (legs per circuit id). The scene code is in `pages/jeep-map/jeep-scene.ts`; the page only
 reads the data. Positions are illustrative, not measured. Clicking a part opens its connection
 details (`connectionsFor()`), so every node needs a `desc` and every waypoint a `WAYPOINT_LABELS` entry.
+Selecting a circuit also shows an example photo from `data/wire-images.ts` (Wikimedia Commons, free
+licences, files in `public/images/wires/`). Keep the author and licence credit for any photo you add;
+`jeep-map.spec.ts` checks every circuit has one.
 
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CATEGORIES, CIRCUITS, Circuit } from '../../data/wiring-data';
 import { LEG_KIND_LABEL, MAP_NODES, MAP_ROUTES, NODE_KIND_LABEL, connectionsFor, wireColorFor } from '../../data/jeep-map';
+import { wireImageFor } from '../../data/wire-images';
 import { IconComponent } from '../../components/icon/icon.component';
 import { JeepScene, PickResult, ViewName } from './jeep-scene';
 
@@ -48,6 +49,9 @@ export class JeepMapComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   kindLabel = LEG_KIND_LABEL;
+
+  // example photo for the selected circuit, if there is one
+  image = computed(() => wireImageFor(this.selectedId() ?? ''));
 
   // The clicked part with every wire that touches it, grouped by circuit
   part = computed(() => {

@@ -164,6 +164,7 @@ button {
 }
 
 .card {
+  display: flow-root;   /* keeps the floated photo inside the card */
   margin-top: 1rem;
   background: var(--panel);
   border: 1px solid var(--border);
@@ -234,6 +235,34 @@ button {
 
 .kind[data-kind='switched'] {
   color: #ffb300;
+}
+
+.photo {
+  float: right;
+  width: min(300px, 100%);
+  margin: 0 0 0.75rem 1.1rem;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.photo figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.credit {
+  display: block;
+}
+
+.credit a {
+  color: var(--accent);
 }
 
 .part h3 {
@@ -357,6 +386,12 @@ button {
 }
 
 @media (max-width: 800px) {
+  .photo {
+    float: none;
+    width: 100%;
+    margin: 0 0 0.75rem;
+  }
+
   .layout {
     grid-template-columns: minmax(0, 1fr);
   }

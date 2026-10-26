@@ -111,6 +111,12 @@ export const MAP_ROUTES: Record<string, Leg[]> = {
     { from: 'groundEngine', to: 'groundChassis', kind: 'ground' },
     { from: 'battery', to: 'groundChassis', kind: 'ground' },
   ],
+  'big-3-upgrade': [
+    { from: 'alternator', to: 'battery', via: ['engineTop'], kind: 'feed' },
+    { from: 'battery', to: 'groundChassis', kind: 'ground' },
+    { from: 'groundEngine', to: 'groundChassis', kind: 'ground' },
+    { from: 'alternator', to: 'groundEngine', kind: 'ground' },
+  ],
   starter: [
     { from: 'battery', to: 'starter', kind: 'feed' },
     { from: 'ignSwitch', to: 'fuseBox', via: ['dashLeft'], kind: 'switched' },
@@ -202,6 +208,7 @@ export const MAP_ROUTES: Record<string, Leg[]> = {
 const CIRCUIT_COLOR_NAME: Record<string, string> = {
   'main-feed': 'Red',
   'charging-system': 'Red',
+  'big-3-upgrade': 'Red',
   starter: 'Red',
   'ignition-carbureted': 'Yellow',
   'fuel-pump': 'Purple',
