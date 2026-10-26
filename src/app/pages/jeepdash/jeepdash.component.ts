@@ -4,9 +4,15 @@ import { Meta, Title } from '@angular/platform-browser';
 import { PHASES } from '../../data/jeepdash-phases';
 import { IconComponent } from '../../components/icon/icon.component';
 
-// Storage key and shape are shared with the standalone GitHub Pages build; keep them compatible
-// so progress and pasted backups carry over.
-const KEY = 'jeepdash-guide-v1';
+// Step ids are `${phase.id}-${index}`, so any change to the step list needs a new key.
+// v2 is the 7" touch board rewrite; v1 data is migrated once on load (the v1 key is left untouched).
+const KEY = 'jeepdash-guide-v2';
+const LEGACY_KEY = 'jeepdash-guide-v1';
+const BACKUP_VERSION = 2;
+
+// Phases whose steps still mean the same thing in v2, so their v1 checkmarks carry over.
+// partlist, bench, power, rpm, install and alarms were rewritten for the new board.
+const KEEP_FROM_V1 = ['coolant', 'oil', 'batt', 'cal'];
 
 interface Cal {
   vref: string;
@@ -39,6 +45,25 @@ function normalize(s: Partial<State>): State {
   return { checked: s.checked || {}, notes: s.notes || {}, cal: { ...DEFAULT_CAL, ...(s.cal || {}) } };
 }
 
+// v1 notes and calibration values stay valid (phase ids did not change); only checkmarks for
+// rewritten phases are dropped.
+function migrateV1(s: Partial<State>): { state: State; cleared: number } {
+  const state = normalize(s);
+  let cleared = 0;
+  const checked: Record<string, true> = {};
+  for (const id of Object.keys(state.checked)) {
+    if (KEEP_FROM_V1.includes(id.split('-')[0])) checked[id] = true;
+    else cleared++;
+  }
+  return { state: { ...state, checked }, cleared };
+}
+
+function migrationNotice(cleared: number): string {
+  return cleared
+    ? `Imported from the 3.5" build. ${cleared} checkmark${cleared === 1 ? '' : 's'} cleared because those steps changed for the 7" touch board. Notes and calibration values were kept.`
+    : 'Imported from the 3.5" build. Notes and calibration values were kept.';
+}
+
 function num(v: string, fallback: number): number {
   const n = parseFloat(v);
   return isFinite(n) ? n : fallback;
@@ -61,7 +86,7 @@ export class JeepdashComponent implements OnInit, OnDestroy {
   phases = PHASES;
 
   calFields: { key: keyof Cal; id: string; label: string; step: string; hint: string }[] = [
-    { key: 'vref', id: 'c-vref', label: '3.3V rail (multimeter)', step: '0.01', hint: 'Measured at the ESP32 3V3 pin. Default 3.30' },
+    { key: 'vref', id: 'c-vref', label: '3.3V rail (multimeter)', step: '0.01', hint: 'Measured at the 3V3 pin on the board I2C header. Default 3.30' },
     { key: 'r25', id: 'c-r25', label: 'Coolant sensor R at 25 °C (Ω)', step: '1', hint: 'From the sensor listing or datasheet. Default 10000' },
     { key: 'beta', id: 'c-beta', label: 'Coolant sensor beta', step: '1', hint: 'Default 3950' },
     { key: 'oilmax', id: 'c-oil', label: 'Oil sensor max psi', step: '1', hint: '100 for a 0–100 psi sensor' },
@@ -73,6 +98,7 @@ export class JeepdashComponent implements OnInit, OnDestroy {
   savedMsg = signal('Saved on this device');
   snippetMsg = signal('');
   importMsg = signal('');
+  migrationMsg = signal('');
   importText = signal('');
   showImport = signal(false);
   confirmReset = signal(false);
@@ -176,7 +202,7 @@ constexpr float FUEL_V_FULL  = ${ffTxt};${isFinite(ff) ? '' : '   // not measure
   }
 
   async copyBackup(): Promise<void> {
-    const text = JSON.stringify(this.state());
+    const text = JSON.stringify({ v: BACKUP_VERSION, ...this.state() });
     try {
       await navigator.clipboard.writeText(text);
       this.savedMsg.set('Backup copied. Paste it somewhere safe.');
@@ -200,7 +226,14 @@ constexpr float FUEL_V_FULL  = ${ffTxt};${isFinite(ff) ? '' : '   // not measure
     try {
       const s = JSON.parse(this.importText());
       if (typeof s !== 'object' || !s || !('checked' in s)) throw new Error('not a backup');
-      this.state.set(normalize(s));
+      if (s.v === BACKUP_VERSION) {
+        this.state.set(normalize(s));
+        this.migrationMsg.set('');
+      } else {
+        const m = migrateV1(s);
+        this.state.set(m.state);
+        this.migrationMsg.set(migrationNotice(m.cleared));
+      }
       this.save();
       this.importMsg.set('Backup restored');
       this.importText.set('');
@@ -211,6 +244,7 @@ constexpr float FUEL_V_FULL  = ${ffTxt};${isFinite(ff) ? '' : '   // not measure
 
   reset(): void {
     this.state.set(emptyState());
+    this.migrationMsg.set('');
     this.save();
     this.confirmReset.set(false);
   }
@@ -227,7 +261,17 @@ constexpr float FUEL_V_FULL  = ${ffTxt};${isFinite(ff) ? '' : '   // not measure
   private load(): void {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) this.state.set(normalize(JSON.parse(raw)));
+      if (raw) {
+        this.state.set(normalize(JSON.parse(raw)));
+        return;
+      }
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        const m = migrateV1(JSON.parse(legacy));
+        this.state.set(m.state);
+        this.migrationMsg.set(migrationNotice(m.cleared));
+        this.save();
+      }
     } catch {
       // unreadable storage or corrupt JSON: start empty
     }

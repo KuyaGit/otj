@@ -8,14 +8,16 @@ export interface Phase {
 
 // Order matters (it is the real build sequence). Step ids are `${phase.id}-${index}` where index
 // counts "§" group headings too, and they are the saved-data contract, so never reorder, sort or
-// filter this list. If steps must change, bump the storage key to jeepdash-guide-v2 and migrate.
+// filter this list. If steps must change again, bump the storage key to jeepdash-guide-v3 and migrate.
+// v2 = 7" touch board rewrite of partlist, bench, power, rpm, install and alarms (coolant has a
+// one-word rename). The "unchanged" phases that migrate from v1 are listed in jeepdash.component.ts.
 export const PHASES: Phase[] = [
   {id:"partlist", title:"Gather parts", why:"Tick each part as it arrives. Buy everything before you start so the jeep isn't left half-wired. Most of it is on Shopee or Lazada; rough total ₱2,500–4,000.",
    steps:[
     "§Controller and display",
-    "ESP32 DevKit V1 (38-pin)<span class=\"qty\">×1</span>",
-    "3.5\" ILI9488 SPI TFT screen, 480×320<span class=\"qty\">×1</span>",
+    "Waveshare ESP32-S3-Touch-LCD-7B, touch version (7\" 1024×600)<span class=\"qty\">×1</span>",
     "ADS1115 16-bit ADC module<span class=\"qty\">×1</span>",
+    "HY2.0 cable pigtails: 4-pin (I2C), 3-pin (GPIO), 4-pin (UART)<span class=\"qty\">1 set</span>",
     "Dupont jumper wires, for the bench test<span class=\"qty\">1 set</span>",
     "§Sensors",
     "Coolant NTC temperature sensor, 1/8\" NPT<span class=\"qty\">×1</span>",
@@ -45,7 +47,7 @@ export const PHASES: Phase[] = [
     "5V active buzzer<span class=\"qty\">×1</span>",
     "2N2222 NPN transistor<span class=\"qty\">×1</span>",
     "1kΩ resistor, buzzer transistor base<span class=\"qty\">×1</span>",
-    "Momentary push button, mute<span class=\"qty\">×1</span>",
+    "10kΩ resistor, buzzer base pull-down<span class=\"qty\">×1</span>",
     "§Power",
     "12V→5V automotive buck converter, 3A<span class=\"qty\">×1</span>",
     "Inline fuse holder<span class=\"qty\">×1</span>",
@@ -64,10 +66,10 @@ export const PHASES: Phase[] = [
    steps:[
     "Install VS Code and the PlatformIO extension",
     "Unzip <code>jeepdash.zip</code>, open the folder, run Build. Fix any errors before going further",
-    "Wire the TFT: MOSI <code>23</code>, SCLK <code>18</code>, CS <code>15</code>, DC <code>2</code>, RST <code>4</code>, LED to 3.3V, VCC and GND",
-    "Upload. The splash shows <em>ADS1115 not found</em>, which is expected with no ADC yet",
-    "Add the ADS1115: SDA <code>21</code>, SCL <code>22</code>, VDD 3.3V, ADDR to GND. Reboot and confirm <em>Sensors ready</em>",
-    "Wire buzzer (GPIO <code>25</code> → 1k → 2N2222 base) and mute button (GPIO <code>32</code> to GND). Confirm the boot chirp"]},
+    "Plug the board's native USB-C port into the laptop (the port marked USB, not UART). If no port appears, hold BOOT while plugging in",
+    "Upload. The screen shows the splash with <em>ADS1115 not found</em>, which is expected with no ADC yet",
+    "Add the ADS1115 on the I2C header: SDA <code>8</code>, SCL <code>9</code>, VDD 3.3V, ADDR to GND. Reboot and confirm <em>Sensors ready</em>",
+    "Wire the buzzer on the UART header RX pin (GPIO <code>44</code> → 1k → 2N2222 base, plus 10k from base to GND). Set the UART switch to the header, not the USB-UART. Confirm the boot chirp, and that it stays silent while the board boots"]},
   {id:"power", title:"Power supply", why:"Clean, fused power is what keeps the ESP32 alive through cranking and alternator spikes.",
    caution:"Disconnect the battery negative before tapping any 12V wire.",
    steps:[
@@ -75,7 +77,7 @@ export const PHASES: Phase[] = [
     "Put the inline 3A fuse right at the tap point",
     "Fit the TVS diode across the buck converter input",
     "Power the buck converter alone and confirm 5.0V output with a multimeter",
-    "Connect 5V to ESP32 <code>VIN</code> and GND to chassis ground",
+    "Connect 5V to the board's 5V power header and GND to chassis ground. Keep USB-C unplugged while it is powered from the jeep",
     "Turn the key: the dash should boot within two seconds"]},
   {id:"coolant", title:"Coolant temperature sensor", why:"Overheating is the fastest way to warp a 4K head. This sensor drives the overheat alarm.",
    caution:"Only open the cooling system with the engine cold. A hot radiator sprays scalding coolant.",
@@ -85,7 +87,7 @@ export const PHASES: Phase[] = [
     "Thread the NTC sensor into the T-adapter with sealant",
     "Refill and bleed air: idle with the radiator cap off until the thermostat opens",
     "Wire: 3.3V → 1kΩ → junction → sensor. Junction → ADS1115 <code>A0</code>",
-    "Bond the ESP32 ground to the engine block",
+    "Bond the board ground to the engine block",
     "With the engine cold, the gauge should read close to air temperature"]},
   {id:"oil", title:"Oil pressure sensor", why:"Low oil pressure is the one alarm that saves an engine. Keep the stock warning light too.",
    caution:"Use thread sealant paste, not tape. Loose tape shreds can block oil passages.",
@@ -108,13 +110,13 @@ export const PHASES: Phase[] = [
     "Find the coil negative terminal (the wire going to the distributor)",
     "Coil − → 22kΩ 1W → 1N4007 → PC817 pin 1. PC817 pin 2 to GND",
     "1N4148 across PC817 pins 1–2, reversed",
-    "PC817 pin 4 → GPIO <code>34</code> with a 10kΩ pull-up to 3.3V. Pin 3 to GND",
+    "PC817 pin 4 → GPIO <code>6</code> on the 3-pin GPIO header, with a 10kΩ pull-up to the 3V3 pin on that header. Pin 3 to GND",
     "Start the engine: idle reads steady and matches a tach or timing light",
     "Blip the throttle: RPM follows without jumping around"]},
   {id:"install", title:"Install in the jeep", why:"Heat, vibration and sun are what kill DIY electronics in a jeep.",
    steps:[
-    "Mount the screen where it's shaded from direct sun",
-    "Mount the ESP32 box inside the cabin, never in the engine bay",
+    "Mount the 7-inch screen where it's shaded from direct sun, on a firm bracket (it is large and heavy for a dash mount)",
+    "Mount the sensor box (ADS1115, resistors, optocoupler) inside the cabin, never in the engine bay",
     "Route sensor wires away from spark plug leads and exhaust",
     "Use grommets wherever wires pass through the firewall",
     "Zip-tie everything and label each wire at both ends"]},
@@ -130,7 +132,7 @@ export const PHASES: Phase[] = [
     "Unplug the oil sensor: <em>OIL SENSOR?</em> appears after 3 seconds",
     "Unplug the coolant sensor: <em>TEMP SENSOR?</em> appears",
     "Engine running with headlights on: no <em>NOT CHARGING</em> warning",
-    "Press mute: buzzer stops, banner stays until the problem clears",
+    "Tap the top bar of the screen to mute: buzzer stops, banner stays until the problem clears",
     "Set <code>TEMP_WARN_C</code> to 60, upload, warm up: <em>ENGINE HOT</em> fires. Set it back to 100",
     "Take a 20-minute drive and watch for false alarms"]}
 ];

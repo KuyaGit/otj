@@ -1,6 +1,6 @@
 <div class="jeepdash" (click)="onContentClick($event)">
   <header class="head">
-    <div class="eyebrow">Toyota 4K · owner-type jeep · ESP32 digital dash</div>
+    <div class="eyebrow">Toyota 4K · owner-type jeep · ESP32-S3 7" touch dash</div>
     <h1><app-icon name="gauge"></app-icon> JeepDash Build Log</h1>
     <p class="lede">
       Ten phases from parts to a working dash with oil, coolant, RPM, battery and fuel alarms. Tick each step as you
@@ -22,6 +22,7 @@
         <button type="button" class="danger" (click)="confirmReset.set(true)">Reset progress</button>
       </div>
     </div>
+    <div class="notice" role="status" *ngIf="migrationMsg()">{{ migrationMsg() }}</div>
     <div class="confirm" [hidden]="!confirmReset()">
       <span>Clear every checkmark, note and calibration value?</span>
       <button type="button" class="danger" (click)="reset()">Yes, clear all</button>
@@ -126,7 +127,7 @@
   </section>
 
   <p class="foot">
-    Progress is stored with <code>localStorage</code> under the key <code>jeepdash-guide-v1</code>. It stays on this
+    Progress is stored with <code>localStorage</code> under the key <code>jeepdash-guide-v2</code>. It stays on this
     device and browser only, so use Copy backup before switching phones or clearing browser data.
   </p>
 </div>

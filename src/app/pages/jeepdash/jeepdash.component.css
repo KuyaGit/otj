@@ -136,6 +136,13 @@ button.danger {
   outline-offset: 2px;
 }
 
+.notice {
+  border-left: 3px solid var(--accent);
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  background: var(--accent-soft);
+}
+
 .confirm {
   display: flex;
   gap: 0.5rem;
