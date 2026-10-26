@@ -236,6 +236,112 @@ button {
   color: #ffb300;
 }
 
+.part h3 {
+  margin: 0.9rem 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.tag {
+  margin-left: 0.4rem;
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.close {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.desc {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+}
+
+.conns,
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.conns {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.conns > li {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.conns > li.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.conn-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.55rem;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.conn-head .spec {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.links {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+}
+
+.links li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1rem 0.5rem;
+  padding: 0.2rem 0 0.2rem 1.25rem;
+}
+
+.arrow {
+  color: var(--text-dim);
+}
+
+.wire i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-right: 0.3rem;
+  border-radius: 50%;
+  vertical-align: -1px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.route {
+  flex-basis: 100%;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
 .muted,
 .foot {
   color: var(--text-dim);

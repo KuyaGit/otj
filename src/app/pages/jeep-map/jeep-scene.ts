@@ -34,7 +34,11 @@ const NODE_COLOR: Record<NodeKind, string> = {
 const DIM_OPACITY = 0.1;
 const FLOW_SPEED_MPS = 0.7;
 
+export type PickResult = { circuitId: string } | { nodeId: string };
+
 interface WireLeg {
+  from: string;
+  to: string;
   mesh: THREE.Mesh;
   pick: THREE.Mesh;
   curve: THREE.Curve<THREE.Vector3>;
@@ -84,12 +88,13 @@ export class JeepScene {
   private dots: { mesh: THREE.Mesh; leg: WireLeg; phase: number }[] = [];
   private flow = new THREE.Group();
   private selected: string | null = null;
+  private focusNode: string | null = null;
   private showGround = true;
   private reducedMotion = false;
   private goal: { pos: THREE.Vector3; target: THREE.Vector3 } | null = null;
   private down: { x: number; y: number } | null = null;
 
-  constructor(private host: HTMLElement, private onPick: (circuitId: string) => void) {
+  constructor(private host: HTMLElement, private onPick: (hit: PickResult) => void) {
     // throws when WebGL is unavailable: the caller shows a fallback message
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -138,6 +143,18 @@ export class JeepScene {
   setSelection(id: string | null): void {
     this.selected = id && this.wires.has(id) ? id : null;
     this.applyState();
+  }
+
+  // Highlights a part and every wire that touches it. `fly` also moves the camera to look at it.
+  setFocusNode(id: string | null, fly = false): void {
+    this.focusNode = id && this.nodes.has(id) ? id : null;
+    this.applyState();
+    if (fly && this.focusNode) {
+      const target = this.nodes.get(this.focusNode)!.mesh.position.clone();
+      const offset = this.camera.position.clone().sub(this.controls.target);
+      offset.setLength(Math.min(offset.length(), 3.2));
+      this.goal = { pos: target.clone().add(offset), target };
+    }
   }
 
   setShowGround(show: boolean): void {
@@ -238,7 +255,7 @@ export class JeepScene {
         );
         mesh.userData['circuitId'] = pick.userData['circuitId'] = circuit.id;
         this.scene.add(mesh, pick);
-        wire.legs.push({ mesh, pick, curve, length, kind: leg.kind });
+        wire.legs.push({ from: leg.from, to: leg.to, mesh, pick, curve, length, kind: leg.kind });
       }
       this.wires.set(circuit.id, wire);
     });
@@ -270,28 +287,47 @@ export class JeepScene {
   }
 
   // ----------------------------------------------------------------- state
+  private touchesFocus(leg: WireLeg): boolean {
+    return !!this.focusNode && (leg.from === this.focusNode || leg.to === this.focusNode);
+  }
+
   private applyState(): void {
     const sel = this.selected;
+    const focus = this.focusNode;
+    const neighbours = new Set<string>(focus ? [focus] : []);
+
     this.wires.forEach((wire, id) => {
-      const active = sel === null || sel === id;
       for (const leg of wire.legs) {
         const hidden = leg.kind === 'ground' && !this.showGround;
         leg.mesh.visible = !hidden;
         leg.pick.visible = !hidden;
+
+        // a selected circuit wins over a focused part; with neither, show the overview
+        const lit = sel !== null ? sel === id : focus ? this.touchesFocus(leg) : false;
+        if (focus && sel === null && this.touchesFocus(leg)) {
+          neighbours.add(leg.from);
+          neighbours.add(leg.to);
+        }
         const m = leg.mesh.material as THREE.MeshStandardMaterial;
+        const dimmed = sel !== null || focus ? !lit : false;
         // with nothing selected, keep ground wires faint so the power wiring reads first
-        const overview = sel === null ? (leg.kind === 'ground' ? 0.35 : 0.9) : 1;
-        m.opacity = active ? overview : DIM_OPACITY;
-        m.depthWrite = active;
-        m.emissive.set(sel === id ? m.color : 0x000000);
-        m.emissiveIntensity = sel === id ? 0.45 : 0;
+        const overview = leg.kind === 'ground' ? 0.35 : 0.9;
+        m.opacity = dimmed ? DIM_OPACITY : lit ? 1 : overview;
+        m.depthWrite = !dimmed;
+        m.emissive.set(lit ? m.color : 0x000000);
+        m.emissiveIntensity = lit ? 0.45 : 0;
       }
     });
 
-    const onSelected = sel ? this.wires.get(sel)!.nodeIds : null;
+    const onSelected = sel ? this.wires.get(sel)!.nodeIds : focus ? neighbours : null;
     this.nodes.forEach((n, id) => {
+      const mat = n.mesh.material as THREE.MeshStandardMaterial;
       const active = !onSelected || onSelected.has(id);
-      (n.mesh.material as THREE.MeshStandardMaterial).opacity = active ? 1 : DIM_OPACITY + 0.1;
+      mat.opacity = active ? 1 : DIM_OPACITY + 0.1;
+      const isFocus = id === focus;
+      n.mesh.scale.setScalar(isFocus ? 1.7 : 1);
+      mat.emissive.set(isFocus ? 0xffffff : 0x000000);
+      mat.emissiveIntensity = isFocus ? 0.5 : 0;
       const show = onSelected ? onSelected.has(id) : n.kind === 'hub' || n.kind === 'source';
       n.label.element.classList.toggle('on', show);
     });
@@ -302,10 +338,12 @@ export class JeepScene {
   private rebuildFlow(): void {
     this.flow.clear();
     this.dots = [];
-    if (!this.selected || this.reducedMotion) return;
-    const wire = this.wires.get(this.selected)!;
+    if (this.reducedMotion || (!this.selected && !this.focusNode)) return;
+    const legs = this.selected
+      ? this.wires.get(this.selected)!.legs
+      : [...this.wires.values()].flatMap((w) => w.legs.filter((l) => this.touchesFocus(l)));
     const geo = new THREE.SphereGeometry(0.03, 8, 6);
-    for (const leg of wire.legs) {
+    for (const leg of legs) {
       if (leg.kind === 'ground' && !this.showGround) continue;
       for (let k = 0; k < 2; k++) {
         const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
@@ -356,11 +394,7 @@ export class JeepScene {
     const hit = this.raycaster.intersectObjects(targets, false)[0]?.object;
     if (!hit) return;
 
-    if (hit.userData['circuitId']) return this.onPick(hit.userData['circuitId']);
-    // node: pick a circuit that uses it, cycling through them on repeated clicks
-    const nodeId = hit.userData['nodeId'] as string;
-    const users = CIRCUITS.filter((c) => this.wires.get(c.id)?.nodeIds.has(nodeId)).map((c) => c.id);
-    const next = users[(users.indexOf(this.selected ?? '') + 1) % users.length];
-    if (next) this.onPick(next);
+    if (hit.userData['nodeId']) this.onPick({ nodeId: hit.userData['nodeId'] });
+    else if (hit.userData['circuitId']) this.onPick({ circuitId: hit.userData['circuitId'] });
   };
 }

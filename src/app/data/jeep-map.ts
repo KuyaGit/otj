@@ -11,6 +11,7 @@ export interface MapNode {
   label: string;
   pos: Vec3;
   kind: NodeKind;
+  desc: string;   // what the part is and the wire/fuse facts from the circuit pages
 }
 
 // feed: constant battery power · switched: only live with the key or a switch · ground: return path
@@ -24,36 +25,36 @@ export interface Leg {
 }
 
 export const MAP_NODES: Record<string, MapNode> = {
-  battery: { label: 'Battery', pos: [-0.45, 0.8, 1.3], kind: 'source' },
-  alternator: { label: 'Alternator', pos: [0.25, 0.65, 1.35], kind: 'source' },
-  starter: { label: 'Starter', pos: [-0.3, 0.5, 0.95], kind: 'load' },
-  coil: { label: 'Coil / distributor / choke', pos: [0.15, 0.95, 1.15], kind: 'load' },
-  fuseBox: { label: 'Fuse / relay panel', pos: [-0.4, 0.95, 0.45], kind: 'hub' },
-  ignSwitch: { label: 'Ignition switch', pos: [-0.3, 1.0, 0.25], kind: 'switch' },
-  colSwitch: { label: 'Column switches (lights, turn)', pos: [-0.3, 1.08, 0.22], kind: 'switch' },
-  brakeSwitch: { label: 'Brake pedal switch', pos: [-0.38, 0.65, 0.2], kind: 'switch' },
+  battery: { label: 'Battery', pos: [-0.45, 0.8, 1.3], kind: 'source', desc: 'Main power source. Fit the main fuse (60–100A) as close to the positive terminal as practical.' },
+  alternator: { label: 'Alternator', pos: [0.25, 0.65, 1.35], kind: 'source', desc: 'Charges the battery while the engine runs. The charge cable to the battery is 6–8 AWG with a 40–80A fuse or fusible link.' },
+  starter: { label: 'Starter', pos: [-0.3, 0.5, 0.95], kind: 'load', desc: 'Takes heavy battery current through a 2–4 AWG cable. The ignition switch only triggers the starter relay, never the motor current.' },
+  coil: { label: 'Coil / distributor / choke', pos: [0.15, 0.95, 1.15], kind: 'load', desc: 'Ignition coil, module, distributor and electric choke, fed from the ignition relay (14–16 AWG, 10–15A per sub-circuit).' },
+  fuseBox: { label: 'Fuse / relay panel', pos: [-0.4, 0.95, 0.45], kind: 'hub', desc: 'Central fuse and relay panel under the dash. High-current loads switch through relays here instead of through dash switches.' },
+  ignSwitch: { label: 'Ignition switch', pos: [-0.3, 1.0, 0.25], kind: 'switch', desc: 'Ignition switch. It only triggers relays and switched circuits and should never carry starter or heavy load current.' },
+  colSwitch: { label: 'Column switches (lights, turn)', pos: [-0.3, 1.08, 0.22], kind: 'switch', desc: 'Steering column light and turn-signal switches. The headlight switch only triggers the relays, it does not carry lamp current.' },
+  brakeSwitch: { label: 'Brake pedal switch', pos: [-0.38, 0.65, 0.2], kind: 'switch', desc: 'Brake pedal switch. It feeds the brake lamps on 16 AWG with a 10A fuse.' },
 
-  headL: { label: 'Headlight L', pos: [-0.55, 0.95, 1.8], kind: 'load' },
-  headR: { label: 'Headlight R', pos: [0.55, 0.95, 1.8], kind: 'load' },
-  turnFL: { label: 'Front turn lamp L', pos: [-0.7, 0.9, 1.78], kind: 'load' },
-  turnFR: { label: 'Front turn lamp R', pos: [0.7, 0.9, 1.78], kind: 'load' },
-  horn: { label: 'Horn', pos: [0.35, 0.8, 1.6], kind: 'load' },
-  fan: { label: 'Radiator fan', pos: [0.0, 0.85, 1.55], kind: 'load' },
-  wiperMotor: { label: 'Wiper motor', pos: [0.05, 1.18, 0.62], kind: 'load' },
-  ledBar: { label: 'LED light bar', pos: [0.0, 1.68, 0.45], kind: 'load' },
-  gauges: { label: 'Gauge cluster', pos: [-0.3, 1.1, 0.3], kind: 'load' },
-  radio: { label: 'Radio', pos: [0.0, 1.05, 0.3], kind: 'load' },
-  socket: { label: '12V socket', pos: [0.2, 0.98, 0.3], kind: 'load' },
-  dome: { label: 'Dome light', pos: [0.0, 1.7, -0.3], kind: 'load' },
-  tailL: { label: 'Tail / brake lamp L', pos: [-0.62, 0.8, -1.8], kind: 'load' },
-  tailR: { label: 'Tail / brake lamp R', pos: [0.62, 0.8, -1.8], kind: 'load' },
-  fuelPump: { label: 'Fuel pump', pos: [0.0, 0.45, -1.35], kind: 'load' },
-  amp: { label: 'Amplifier', pos: [0.3, 0.65, -0.95], kind: 'load' },
+  headL: { label: 'Headlight L', pos: [-0.55, 0.95, 1.8], kind: 'load', desc: 'Left headlamp. Low and high beam are fed through separate 12 AWG, 20A relay circuits.' },
+  headR: { label: 'Headlight R', pos: [0.55, 0.95, 1.8], kind: 'load', desc: 'Right headlamp. Low and high beam are fed through separate 12 AWG, 20A relay circuits.' },
+  turnFL: { label: 'Front turn lamp L', pos: [-0.7, 0.9, 1.78], kind: 'load', desc: 'Left front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A (15A if the hazard load needs it).' },
+  turnFR: { label: 'Front turn lamp R', pos: [0.7, 0.9, 1.78], kind: 'load', desc: 'Right front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A (15A if the hazard load needs it).' },
+  horn: { label: 'Horn', pos: [0.35, 0.8, 1.6], kind: 'load', desc: 'Horn, switched by a relay on 12 AWG with a 20A fuse. The horn button only triggers the relay.' },
+  fan: { label: 'Radiator fan', pos: [0.0, 0.85, 1.55], kind: 'load', desc: 'Electric radiator fan. Size the wire and fuse to the fan current (14–10 AWG, 15–40A) and drive it through a relay.' },
+  wiperMotor: { label: 'Wiper motor', pos: [0.05, 1.18, 0.62], kind: 'load', desc: 'Wiper motor on 14 AWG with a 15–20A fuse. Follow the motor manufacturer specification if you have it.' },
+  ledBar: { label: 'LED light bar', pos: [0.0, 1.68, 0.45], kind: 'load', desc: 'Auxiliary LED lights. Feed them through a fuse and relay. LEDs rated 9–32V with a built-in driver need no stabilizer.' },
+  gauges: { label: 'Gauge cluster', pos: [-0.3, 1.1, 0.3], kind: 'load', desc: 'Dash gauges and indicator lamps on a 10A GAUGE fuse with 18 AWG wire.' },
+  radio: { label: 'Radio', pos: [0.0, 1.05, 0.3], kind: 'load', desc: 'Head unit on a switched feed, 16 AWG with a 10A fuse.' },
+  socket: { label: '12V socket', pos: [0.2, 0.98, 0.3], kind: 'load', desc: '12V socket on 14 AWG with a 15A fuse (16 AWG and 10A for a USB-only charger).' },
+  dome: { label: 'Dome light', pos: [0.0, 1.7, -0.3], kind: 'load', desc: 'Interior light on a switched feed, 18 AWG (16 AWG for several LEDs) with a 5A fuse.' },
+  tailL: { label: 'Tail / brake lamp L', pos: [-0.62, 0.8, -1.8], kind: 'load', desc: 'Left rear lamp assembly: tail, brake and rear turn signal, fed on 16 AWG with 10A fuses.' },
+  tailR: { label: 'Tail / brake lamp R', pos: [0.62, 0.8, -1.8], kind: 'load', desc: 'Right rear lamp assembly: tail, brake and rear turn signal, fed on 16 AWG with 10A fuses.' },
+  fuelPump: { label: 'Fuel pump', pos: [0.0, 0.45, -1.35], kind: 'load', desc: 'Electric fuel pump at the tank. Size the wire and fuse to the pump current (16–12 AWG, 7.5–20A) and drive it through a relay.' },
+  amp: { label: 'Amplifier', pos: [0.3, 0.65, -0.95], kind: 'load', desc: 'Amplifier with its own heavy power cable (8–4 AWG) and fuse, separate from the head-unit circuit.' },
 
-  groundChassis: { label: 'Chassis ground (front)', pos: [-0.6, 0.55, 1.25], kind: 'ground' },
-  groundEngine: { label: 'Engine block ground', pos: [0.0, 0.6, 1.1], kind: 'ground' },
-  groundBody: { label: 'Body ground (dash)', pos: [-0.6, 0.55, 0.35], kind: 'ground' },
-  groundRear: { label: 'Chassis ground (rear)', pos: [-0.55, 0.5, -1.4], kind: 'ground' },
+  groundChassis: { label: 'Chassis ground (front)', pos: [-0.6, 0.55, 1.25], kind: 'ground', desc: 'Front chassis ground. Battery negative goes to the chassis on 4 AWG, and the front-end loads return here.' },
+  groundEngine: { label: 'Engine block ground', pos: [0.0, 0.6, 1.1], kind: 'ground', desc: 'Engine block ground. The engine to chassis strap is 4–6 AWG.' },
+  groundBody: { label: 'Body ground (dash)', pos: [-0.6, 0.55, 0.35], kind: 'ground', desc: 'Body ground for dash and cabin loads. The body to chassis strap is 8–10 AWG.' },
+  groundRear: { label: 'Chassis ground (rear)', pos: [-0.55, 0.5, -1.4], kind: 'ground', desc: 'Rear chassis ground for the tail lamps, fuel pump and amplifier.' },
 };
 
 // Shared bends. Routes that use the same waypoints bundle into trunks like a real harness.
@@ -72,6 +73,24 @@ export const MAP_WAYPOINTS: Record<string, Vec3> = {
   railRear: [-0.62, 0.45, -1.7],
   crossRear: [0.0, 0.45, -1.7],         // rear crossmember
   crossRearR: [0.62, 0.45, -1.7],
+};
+
+// Plain-English names for the waypoints, used to describe how each wire runs
+export const WAYPOINT_LABELS: Record<string, string> = {
+  firewallL: 'firewall grommet (driver side)',
+  engineTop: 'across the top of the engine bay',
+  frontCross: 'behind the grille',
+  dashLeft: 'behind the dash, driver side',
+  dashCenter: 'behind the dash, centre',
+  aPillarBase: 'base of the driver-side A-pillar',
+  aPillarTop: 'top of the driver-side A-pillar',
+  roofFront: 'front roof rail',
+  railFront: 'driver-side frame rail, front',
+  railMid: 'driver-side frame rail, middle',
+  railRearMid: 'driver-side frame rail, near the tank',
+  railRear: 'driver-side frame rail, rear',
+  crossRear: 'rear crossmember',
+  crossRearR: 'rear crossmember, passenger side',
 };
 
 const FUSE_TO_COL: Leg = { from: 'fuseBox', to: 'colSwitch', via: ['dashLeft'], kind: 'feed' };
@@ -219,3 +238,58 @@ export function legPoints(leg: Leg): Vec3[] {
 }
 
 export const MAPPED_CIRCUIT_IDS: string[] = CIRCUITS.map((c) => c.id).filter((id) => MAP_ROUTES[id]?.length);
+
+export const NODE_KIND_LABEL: Record<NodeKind, string> = {
+  source: 'Power source',
+  hub: 'Fuse / relay hub',
+  switch: 'Switch',
+  load: 'Load',
+  ground: 'Ground point',
+};
+
+export const LEG_KIND_LABEL: Record<LegKind, string> = {
+  feed: 'Constant power',
+  switched: 'Switched power',
+  ground: 'Ground return',
+};
+
+export interface NodeLink {
+  direction: 'in' | 'out';   // in: the wire arrives at this part, out: it leaves toward `other`
+  otherId: string;
+  other: string;
+  kind: LegKind;
+  color: string;
+  colorName: string;
+  route: string;             // how the wire runs, starting from this part
+}
+
+export interface NodeConnection {
+  circuitId: string;
+  links: NodeLink[];
+}
+
+// Every wire that touches a part, grouped by circuit in the guide's order
+export function connectionsFor(nodeId: string): NodeConnection[] {
+  const result: NodeConnection[] = [];
+  for (const circuit of CIRCUITS) {
+    const links: NodeLink[] = [];
+    for (const leg of MAP_ROUTES[circuit.id] ?? []) {
+      if (leg.from !== nodeId && leg.to !== nodeId) continue;
+      const outgoing = leg.from === nodeId;
+      const otherId = outgoing ? leg.to : leg.from;
+      const via = leg.via ?? [];
+      const ground = leg.kind === 'ground';
+      links.push({
+        direction: outgoing ? 'out' : 'in',
+        otherId,
+        other: MAP_NODES[otherId].label,
+        kind: leg.kind,
+        color: ground ? GROUND_WIRE_COLOR : wireColorFor(circuit.id),
+        colorName: ground ? 'Black' : CIRCUIT_COLOR_NAME[circuit.id] ?? 'Orange',
+        route: (outgoing ? via : [...via].reverse()).map((w) => WAYPOINT_LABELS[w]).join(' → '),
+      });
+    }
+    if (links.length) result.push({ circuitId: circuit.id, links });
+  }
+  return result;
+}

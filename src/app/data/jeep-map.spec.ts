@@ -1,5 +1,5 @@
 import { CIRCUITS } from './wiring-data';
-import { MAP_NODES, MAP_ROUTES, MAP_WAYPOINTS, legPoints, wireRadius } from './jeep-map';
+import { MAP_NODES, MAP_ROUTES, MAP_WAYPOINTS, WAYPOINT_LABELS, connectionsFor, legPoints, wireRadius } from './jeep-map';
 
 describe('jeep-map data', () => {
   it('has a 3D route for every circuit', () => {
@@ -58,5 +58,44 @@ describe('wireRadius', () => {
 
   it('falls back to 16 AWG when there is no gauge in the text', () => {
     expect(wireRadius('see breakdown')).toBe(wireRadius('16 AWG'));
+  });
+});
+
+describe('part details', () => {
+  it('describes every part and labels every waypoint', () => {
+    for (const [id, n] of Object.entries(MAP_NODES)) expect(n.desc.length).withContext(id).toBeGreaterThan(20);
+    for (const id of Object.keys(MAP_WAYPOINTS)) expect(WAYPOINT_LABELS[id]).withContext(id).toBeTruthy();
+  });
+
+  it('uses every part in at least one route', () => {
+    const used = new Set(Object.values(MAP_ROUTES).flatMap((legs) => legs.flatMap((l) => [l.from, l.to])));
+    expect(Object.keys(MAP_NODES).filter((id) => !used.has(id))).toEqual([]);
+  });
+
+  it('lists the circuits that touch a part, in guide order', () => {
+    const ids = connectionsFor('battery').map((c) => c.circuitId);
+    expect(ids).toContain('main-feed');
+    expect(ids).toContain('starter');
+    expect(ids.indexOf('main-feed')).toBeLessThan(ids.indexOf('starter'));
+  });
+
+  it('says which way each wire runs and how', () => {
+    const starter = connectionsFor('starter').find((c) => c.circuitId === 'starter')!;
+    const fromBattery = starter.links.find((l) => l.otherId === 'battery')!;
+    expect(fromBattery.direction).toBe('in');
+    const fuel = connectionsFor('fuelPump').find((c) => c.circuitId === 'fuel-pump')!;
+    const feed = fuel.links.find((l) => l.kind === 'switched')!;
+    expect(feed.direction).toBe('in');
+    expect(feed.route.split(' → ')[0]).toBe(WAYPOINT_LABELS['railRearMid']);   // starts at the pump end
+  });
+
+  it('draws ground wires black and names the circuit colour for the rest', () => {
+    const horn = connectionsFor('horn').find((c) => c.circuitId === 'horn')!;
+    expect(horn.links.find((l) => l.kind === 'ground')!.colorName).toBe('Black');
+    expect(horn.links.find((l) => l.kind === 'feed')!.colorName).toBe('Orange');
+  });
+
+  it('returns nothing for an unknown part', () => {
+    expect(connectionsFor('nope')).toEqual([]);
   });
 });

@@ -2,7 +2,7 @@
   <h1><app-icon name="cube"></app-icon> 3D Wiring Map</h1>
   <p>
     Every accessory circuit routed on the Jeep. Pick a circuit to light up its wire from the source to the
-    load. Drag to rotate, scroll or pinch to zoom, click a wire to select it.
+    load. Drag to rotate, scroll or pinch to zoom, click a wire to select a circuit or a dot to open that part's connections.
   </p>
 </header>
 
@@ -46,6 +46,34 @@
     </div>
   </section>
 </div>
+
+<section class="card part" *ngIf="part() as p" aria-live="polite">
+  <div class="card-head">
+    <h2>{{ p.label }} <span class="tag" [attr.data-kind]="p.kind">{{ p.kindLabel }}</span></h2>
+    <button type="button" class="close" (click)="selectPart(null)">Close</button>
+  </div>
+  <p class="desc">{{ p.desc }}</p>
+
+  <h3>Connections ({{ p.connections.length }} circuit{{ p.connections.length === 1 ? '' : 's' }})</h3>
+  <ul class="conns">
+    <li *ngFor="let c of p.connections" [class.on]="selectedId() === c.circuitId">
+      <button type="button" class="conn-head" (click)="selectCircuit(c.circuitId)">
+        <span class="swatch" [style.background]="color(c.circuitId)"></span>
+        <b>{{ c.circuit.name }}</b>
+        <span class="spec">{{ c.circuit.wireGauge }} · {{ c.circuit.fuse }}</span>
+      </button>
+      <ul class="links">
+        <li *ngFor="let l of c.links">
+          <span class="arrow">{{ l.direction === 'in' ? 'from' : 'to' }}</span>
+          <b>{{ l.other }}</b>
+          <span class="kind" [attr.data-kind]="l.kind">{{ kindLabel[l.kind] }}</span>
+          <span class="wire"><i [style.background]="l.color"></i>{{ l.colorName }} wire</span>
+          <span class="route" *ngIf="l.route">runs {{ l.route }}</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</section>
 
 <section class="card" *ngIf="selected() as c" aria-live="polite">
   <div class="card-head">
