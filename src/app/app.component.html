@@ -1,6 +1,17 @@
 <div class="shell">
   <header class="topbar">
     <a routerLink="/" class="brand"><app-icon name="jeep"></app-icon> Jeep Wiring Guide</a>
+    <nav class="tabs" aria-label="Main">
+      <a routerLink="/" class="tab" [class.active]="circuitsActive()" [attr.aria-current]="circuitsActive() ? 'page' : null"
+        ><app-icon name="load"></app-icon> Circuits</a
+      >
+      <a routerLink="/reference" class="tab" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><app-icon name="fuse"></app-icon> Reference</a
+      >
+      <a routerLink="/jeepdash" class="tab" routerLinkActive="active" ariaCurrentWhenActive="page"
+        ><app-icon name="gauge"></app-icon> JeepDash</a
+      >
+    </nav>
   </header>
   <main class="content">
     <router-outlet></router-outlet>
