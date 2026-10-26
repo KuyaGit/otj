@@ -4,12 +4,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Circuit, CIRCUITS, CATEGORIES } from '../../data/wiring-data';
 import { FlowDiagramComponent } from '../../components/flow-diagram/flow-diagram.component';
 import { IconComponent } from '../../components/icon/icon.component';
+import { SchematicComponent } from '../../components/schematic/schematic.component';
+import { CIRCUIT_SCHEMATICS } from '../../data/circuit-schematics';
 import { IconName } from '../../components/icon/icons';
 
 @Component({
   selector: 'app-accessory-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FlowDiagramComponent, IconComponent],
+  imports: [CommonModule, RouterLink, FlowDiagramComponent, IconComponent, SchematicComponent],
   templateUrl: './accessory-detail.component.html',
   styleUrl: './accessory-detail.component.css',
 })
@@ -17,6 +19,7 @@ export class AccessoryDetailComponent {
   circuit?: Circuit;
   categoryName = '';
   categoryIcon: IconName = 'load';
+  schematics = CIRCUIT_SCHEMATICS;
 
   constructor(private route: ActivatedRoute) {
     this.route.paramMap.subscribe((params) => {

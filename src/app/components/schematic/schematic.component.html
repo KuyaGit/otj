@@ -1,0 +1,112 @@
+<ng-template #drawing let-s>
+  <svg:line *ngFor="let l of s.lines" [attr.x1]="l.x1" [attr.y1]="l.y1" [attr.x2]="l.x2" [attr.y2]="l.y2" [attr.stroke]="l.stroke" [attr.stroke-width]="l.w" [attr.opacity]="l.opacity" stroke-linecap="round" />
+  <svg:rect *ngFor="let r of s.rects" [attr.x]="r.x" [attr.y]="r.y" [attr.width]="r.w" [attr.height]="r.h" [attr.stroke]="r.stroke" [attr.fill]="r.fill" [attr.opacity]="r.opacity" stroke-width="0.254" />
+  <svg:circle *ngFor="let c of s.circles" [attr.cx]="c.cx" [attr.cy]="c.cy" [attr.r]="c.r" [attr.stroke]="c.stroke" [attr.fill]="c.fill" [attr.opacity]="c.opacity" stroke-width="0.254" />
+  <svg:text
+    *ngFor="let t of s.texts"
+    [attr.x]="t.x"
+    [attr.y]="t.y"
+    [attr.font-size]="t.size"
+    [attr.fill]="t.fill"
+    [attr.opacity]="t.opacity"
+    [attr.text-anchor]="t.anchor"
+    [attr.font-weight]="t.bold ? 700 : null"
+    font-family="Arial, Helvetica, sans-serif"
+  >{{ t.text }}</svg:text>
+</ng-template>
+
+<figure class="sheet" *ngIf="scene as s" [class.expanded]="expanded" [class.light]="paper === 'kicad'">
+  <div class="toolbar" role="toolbar" aria-label="Schematic controls">
+    <span class="group" role="group" aria-label="Paper">
+      <button type="button" [class.on]="paper === 'dark'" [attr.aria-pressed]="paper === 'dark'" (click)="setPaper('dark')">Dark</button>
+      <button type="button" [class.on]="paper === 'kicad'" [attr.aria-pressed]="paper === 'kicad'" (click)="setPaper('kicad')">KiCad paper</button>
+    </span>
+    <span class="group" role="group" aria-label="Zoom">
+      <button type="button" (click)="zoom(-1)" [disabled]="!canZoomOut" aria-label="Zoom out">−</button>
+      <button type="button" (click)="zoomIndex = 1">Fit</button>
+      <button type="button" (click)="zoom(1)" [disabled]="!canZoomIn" aria-label="Zoom in">+</button>
+    </span>
+    <button *ngIf="!expanded" #expandBtn type="button" (click)="expand()">Expand</button>
+    <button *ngIf="expanded" #closeBtn type="button" class="close" (click)="close()">Close ✕</button>
+  </div>
+
+  <div class="scroll" tabindex="0" role="group" aria-label="Schematic. Scroll sideways if it is wider than the screen.">
+    <svg
+      class="screen"
+      [attr.viewBox]="s.viewBox"
+      [style.background]="s.paper"
+      [style.min-width.px]="minWidth"
+      role="img"
+      [attr.aria-label]="'Schematic of ' + circuit.name + '. Tap a part to see what it does.'"
+      preserveAspectRatio="xMidYMin meet"
+      (click)="clear()"
+    >
+      <ng-container *ngTemplateOutlet="drawing; context: { $implicit: s }"></ng-container>
+      <svg:rect
+        *ngFor="let h of s.hits"
+        class="hit"
+        [class.selected]="h.selected"
+        [attr.x]="h.x" [attr.y]="h.y" [attr.width]="h.w" [attr.height]="h.h"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="h.label + '. Show what it does.'"
+        [attr.aria-pressed]="h.selected"
+        (click)="select(h.ref, $event)"
+        (keydown.enter)="select(h.ref, $event)"
+        (keydown.space)="select(h.ref, $event); $event.preventDefault()"
+      />
+    </svg>
+  </div>
+  <p class="hint">Swipe sideways to see every branch, or use the zoom buttons.</p>
+
+  <svg class="print-only" *ngIf="printScene as p" [attr.viewBox]="p.viewBox" [style.background]="p.paper" aria-hidden="true">
+    <ng-container *ngTemplateOutlet="drawing; context: { $implicit: p }"></ng-container>
+  </svg>
+
+  <div class="info">
+    <div class="selection" *ngIf="selection as d; else tip" role="status">
+      <h4>
+        {{ d.name }} <span class="ref">{{ d.ref }} · {{ d.value }}</span>
+        <button type="button" class="clear" (click)="clear()">Clear</button>
+      </h4>
+      <p>{{ d.help }}</p>
+      <ul>
+        <li *ngFor="let l of d.links">{{ describe(l) }}</li>
+      </ul>
+      <p *ngIf="d.partner" class="partner">
+        {{ d.kind === 'relayCoil'
+          ? 'This coil closes contact ' + d.partner.ref + ' (' + d.partner.value + ').'
+          : 'This contact is closed by coil ' + d.partner.ref + ' (' + d.partner.value + ').' }}
+      </p>
+    </div>
+    <ng-template #tip><p class="tip">Tap or click a part to see what it does and what it connects to.</p></ng-template>
+  </div>
+
+  <details class="legend">
+    <summary>How to read this</summary>
+    <ul>
+      <li *ngFor="let item of legend">
+        <svg class="icon" [attr.viewBox]="item.icon.viewBox" [style.background]="item.icon.paper" aria-hidden="true">
+          <ng-container *ngTemplateOutlet="drawing; context: { $implicit: item.icon }"></ng-container>
+        </svg>
+        <span><b>{{ item.name }}.</b> {{ item.help }}</span>
+      </li>
+    </ul>
+    <p>
+      Lines are wires. A name at the top or bottom of a wire (like <code>+12V BATT</code>) is a net label: wires
+      with the same name are connected, even in different columns. The text beside a wire is its gauge and colour,
+      matching the guide's colour legend. Part names such as <code>K1</code> are KiCad reference numbers.
+    </p>
+  </details>
+
+  <div class="downloads">
+    <span>
+      <button type="button" (click)="downloadKicad()">Download .kicad_sch</button>
+      <small>Open it in KiCad 8 or newer.</small>
+    </span>
+    <span>
+      <button type="button" (click)="downloadNetlist()">Download .netlist.json</button>
+      <small>Netlist for circuit-analysis tools.</small>
+    </span>
+  </div>
+</figure>

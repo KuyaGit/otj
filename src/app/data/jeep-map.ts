@@ -225,8 +225,12 @@ const CIRCUIT_COLOR_NAME: Record<string, string> = {
 // Black would vanish on the dark scene, so return wires are drawn light grey
 export const GROUND_WIRE_COLOR = '#b0b6c0';
 
+export function wireColorNameFor(circuitId: string): string {
+  return CIRCUIT_COLOR_NAME[circuitId] ?? 'Orange';
+}
+
 export function wireColorFor(circuitId: string): string {
-  const name = CIRCUIT_COLOR_NAME[circuitId] ?? 'Orange';
+  const name = wireColorNameFor(circuitId);
   return WIRE_COLORS.find((c) => c.color === name)?.hex ?? '#f57c00';
 }
 
@@ -292,7 +296,7 @@ export function connectionsFor(nodeId: string): NodeConnection[] {
         other: MAP_NODES[otherId].label,
         kind: leg.kind,
         color: ground ? GROUND_WIRE_COLOR : wireColorFor(circuit.id),
-        colorName: ground ? 'Black' : CIRCUIT_COLOR_NAME[circuit.id] ?? 'Orange',
+        colorName: ground ? 'Black' : wireColorNameFor(circuit.id),
         route: (outgoing ? via : [...via].reverse()).map((w) => WAYPOINT_LABELS[w]).join(' → '),
       });
     }

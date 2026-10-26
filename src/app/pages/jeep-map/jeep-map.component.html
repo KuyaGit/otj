@@ -90,7 +90,10 @@
   </figure>
   <div class="card-head">
     <h2><app-icon [name]="c.icon ?? 'load'"></app-icon> {{ c.name }}</h2>
-    <a class="link" [routerLink]="['/accessory', c.id]">Open wiring diagram</a>
+    <span class="links-row">
+      <a class="link" [routerLink]="['/accessory', c.id]" fragment="schematic">Schematic</a>
+      <a class="link" [routerLink]="['/accessory', c.id]">Open wiring diagram</a>
+    </span>
   </div>
   <div class="spec-row">
     <span><b>Wire</b> {{ c.wireGauge }}</span>

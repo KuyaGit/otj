@@ -24,6 +24,11 @@
   <h3>Wiring Diagram</h3>
   <app-flow-diagram [stages]="circuit.diagram"></app-flow-diagram>
 
+  <ng-container *ngIf="schematics[circuit.id]">
+    <h3 id="schematic">KiCad Schematic</h3>
+    <app-schematic [circuit]="circuit"></app-schematic>
+  </ng-container>
+
   <ng-container *ngIf="circuit.groundDiagram">
     <h3>Ground Path</h3>
     <app-flow-diagram [stages]="circuit.groundDiagram" [ground]="true"></app-flow-diagram>

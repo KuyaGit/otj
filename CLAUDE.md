@@ -49,6 +49,17 @@ Selecting a circuit also shows an example photo from `data/wire-images.ts` (Wiki
 licences, files in `public/images/wires/`). Keep the author and licence credit for any photo you add;
 `jeep-map.spec.ts` checks every circuit has one.
 
+**Schematics:** `data/circuit-schematics.ts` describes each circuit as branches of two-pin parts joined
+by net names. `schematics/schematic.ts` lays that out once and produces the KiCad-style drawing on the
+circuit page, a downloadable `.kicad_sch`, and a Universal Netlist (`.netlist.json`).
+`npm run check:netlists` exports all circuits and loads and checks them with the
+`@intelligentelectron/universal-netlist` package (a dev dependency). A new circuit needs an entry here;
+`schematics/schematic.spec.ts` fails without one. Nothing has been opened in KiCad itself yet.
+The page drawing has two palettes (`PALETTES`: dark by default, KiCad paper on a toggle), column captions
+from `branchTitle()`, click-a-part explanations from `describePart()`/`PART_HELP`, and a legend from
+`legendItems()`. The arrow diagrams tag each stage with a role from `flow-roles.ts`. The `.kicad_sch` and
+netlist outputs are locked by golden hashes in `schematic.spec.ts`: change them only on purpose.
+
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`
 and be reachable at `/accessory/<id>` — no route or page changes needed. Also add a `MAP_ROUTES` entry

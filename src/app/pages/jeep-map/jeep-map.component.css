@@ -195,6 +195,11 @@ button {
   text-decoration: none;
 }
 
+.links-row {
+  display: flex;
+  gap: 1rem;
+}
+
 .link:hover {
   text-decoration: underline;
 }
