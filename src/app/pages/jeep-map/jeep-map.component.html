@@ -1,0 +1,70 @@
+<header class="head">
+  <h1><app-icon name="cube"></app-icon> 3D Wiring Map</h1>
+  <p>
+    Every accessory circuit routed on the Jeep. Pick a circuit to light up its wire from the source to the
+    load. Drag to rotate, scroll or pinch to zoom, click a wire to select it.
+  </p>
+</header>
+
+<div class="layout">
+  <aside class="panel" aria-label="Circuits">
+    <button type="button" class="panel-toggle" (click)="listOpen.set(!listOpen())" [attr.aria-expanded]="listOpen()">
+      Circuits <span>{{ listOpen() ? 'Hide' : 'Show' }}</span>
+    </button>
+    <div class="list" [hidden]="!listOpen()">
+      <button type="button" class="all" [class.on]="!selectedId()" (click)="select(null)">Show all wires</button>
+      <div class="group" *ngFor="let g of groups">
+        <h2><app-icon [name]="g.cat.icon"></app-icon> {{ g.cat.name }}</h2>
+        <button
+          type="button"
+          class="item"
+          *ngFor="let c of g.circuits"
+          [class.on]="selectedId() === c.id"
+          [attr.aria-pressed]="selectedId() === c.id"
+          (click)="select(c.id)"
+        >
+          <span class="swatch" [style.background]="color(c.id)"></span>
+          <span>{{ c.name }}</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="stage">
+    <div #host class="canvas" role="img" aria-label="3D view of the Jeep with accessory wiring routes"></div>
+
+    <p class="fallback" *ngIf="webglFailed()">
+      3D view needs WebGL, which isn't available in this browser. The circuit details are still listed below
+      and on each <a routerLink="/">accessory page</a>.
+    </p>
+
+    <div class="toolbar" *ngIf="!webglFailed()">
+      <button type="button" *ngFor="let v of views" (click)="setView(v.id)">{{ v.label }}</button>
+      <button type="button" [class.on]="showGround()" [attr.aria-pressed]="showGround()" (click)="toggleGround()">
+        Ground wires
+      </button>
+    </div>
+  </section>
+</div>
+
+<section class="card" *ngIf="selected() as c" aria-live="polite">
+  <div class="card-head">
+    <h2><app-icon [name]="c.icon ?? 'load'"></app-icon> {{ c.name }}</h2>
+    <a class="link" [routerLink]="['/accessory', c.id]">Open wiring diagram</a>
+  </div>
+  <div class="spec-row">
+    <span><b>Wire</b> {{ c.wireGauge }}</span>
+    <span><b>Fuse</b> {{ c.fuse }}</span>
+  </div>
+  <ng-container *ngIf="hasRoute(c.id); else noRoute">
+    <ol class="legs">
+      <li *ngFor="let l of selectedLegs()">
+        <span class="kind" [attr.data-kind]="l.kind">{{ l.kind }}</span>
+        {{ l.from }} → {{ l.to }}
+      </li>
+    </ol>
+  </ng-container>
+  <ng-template #noRoute><p class="muted">No 3D route yet for this circuit.</p></ng-template>
+</section>
+
+<p class="foot">Illustrative routing for a typical owner-type jeep. Measure your own Jeep before cutting wire.</p>

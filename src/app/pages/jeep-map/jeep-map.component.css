@@ -1,0 +1,280 @@
+:host {
+  display: block;
+}
+
+.head h1 {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.head h1 app-icon {
+  color: var(--accent);
+}
+
+.head p {
+  margin: 0 0 1.25rem;
+  color: var(--text-dim);
+  max-width: 70ch;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem;
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+.panel-toggle {
+  display: none;
+}
+
+.group h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.8rem 0.4rem 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+button {
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.item,
+.all {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.85rem;
+}
+
+.item:hover,
+.all:hover {
+  background: var(--accent-soft);
+}
+
+.item.on,
+.all.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.swatch {
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.stage {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.canvas {
+  position: relative;
+  height: clamp(380px, 62vh, 640px);
+  background: var(--bg);
+  touch-action: none;
+}
+
+.canvas :is(canvas) {
+  display: block;
+}
+
+:host ::ng-deep .label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+:host ::ng-deep .node-label {
+  display: none;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  color: var(--text);
+  background: rgba(15, 17, 21, 0.82);
+  border: 1px solid var(--border);
+}
+
+:host ::ng-deep .node-label.on {
+  display: block;
+}
+
+.toolbar {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.toolbar button {
+  background: rgba(23, 26, 33, 0.9);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.toolbar button:hover,
+.toolbar button.on {
+  border-color: var(--accent);
+}
+
+.fallback {
+  margin: 0;
+  padding: 1rem;
+  color: var(--text-dim);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card {
+  margin-top: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.card-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.link {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.spec-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.spec-row b {
+  color: var(--text);
+  margin-right: 0.35rem;
+}
+
+.legs {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.85rem;
+}
+
+.kind {
+  display: inline-block;
+  min-width: 4.6rem;
+  margin-right: 0.4rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.kind[data-kind='ground'] {
+  color: #b0b6c0;
+}
+
+.kind[data-kind='switched'] {
+  color: #ffb300;
+}
+
+.muted,
+.foot {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.foot {
+  margin-top: 1rem;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    max-height: 260px;
+  }
+
+  .panel-toggle {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 0.4rem 0.5rem;
+    font-weight: 600;
+  }
+
+  .panel-toggle span {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .canvas {
+    height: 56vh;
+  }
+}

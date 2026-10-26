@@ -40,6 +40,12 @@ they don't hold their own copies of guide content.
 arrow diagram (`ground` input switches to the ground-wire visual style). Both `accessory-detail`
 and `reference` reuse it instead of duplicating diagram markup.
 
+**3D map:** `src/app/data/jeep-map.ts` holds the 3D layout used by `/map` (lazy-loaded, three.js):
+`MAP_NODES` (where things sit on the Jeep, in metres), `MAP_WAYPOINTS` (shared harness bends) and
+`MAP_ROUTES` (legs per circuit id). The scene code is in `pages/jeep-map/jeep-scene.ts`; the page only
+reads the data. Positions are illustrative, not measured.
+
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`
-and be reachable at `/accessory/<id>` — no route or page changes needed.
+and be reachable at `/accessory/<id>` — no route or page changes needed. Also add a `MAP_ROUTES` entry
+with the same id in `jeep-map.ts`: `jeep-map.spec.ts` fails if a circuit has no 3D route.

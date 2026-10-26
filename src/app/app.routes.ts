@@ -9,5 +9,9 @@ export const routes: Routes = [
   { path: 'accessory/:id', component: AccessoryDetailComponent },
   { path: 'reference', component: ReferenceComponent },
   { path: 'jeepdash', component: JeepdashComponent },
+  {
+    path: 'map',
+    loadComponent: () => import('./pages/jeep-map/jeep-map.component').then((m) => m.JeepMapComponent),
+  },
   { path: '**', redirectTo: '' },
 ];

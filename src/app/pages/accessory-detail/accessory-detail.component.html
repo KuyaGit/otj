@@ -17,6 +17,10 @@
     </div>
   </div>
 
+  <a class="map-link" routerLink="/map" [queryParams]="{ circuit: circuit.id }"
+    ><app-icon name="cube"></app-icon> View this circuit in the 3D map</a
+  >
+
   <h3>Wiring Diagram</h3>
   <app-flow-diagram [stages]="circuit.diagram"></app-flow-diagram>
 

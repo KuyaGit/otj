@@ -114,3 +114,18 @@ h3 {
   color: var(--text-dim);
   line-height: 1.5;
 }
+
+.map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.map-link:hover {
+  text-decoration: underline;
+}
