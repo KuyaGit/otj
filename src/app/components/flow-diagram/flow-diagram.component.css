@@ -1,54 +1,116 @@
 .flow {
+  list-style: none;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 1.25rem;
+  align-items: stretch;
+  gap: 0.6rem 0.3rem;
+  padding: 1.1rem;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
 
+/* a box and the arrow after it stay together, so an arrow never starts a line */
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  --tint: var(--accent);
+}
+
+.step[data-role='protection'] { --tint: #ffb300; }
+.step[data-role='switch'] { --tint: #64b5f6; }
+.step[data-role='cable'] { --tint: #4db6ac; }
+.step[data-role='load'] { --tint: #cfd3da; }
+.step[data-role='ground'] { --tint: #9aa0ac; }
+
 .node {
-  background: var(--accent-soft);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  padding: 0.6rem 0.9rem;
-  min-width: 120px;
-  text-align: left;
+  position: relative;
+  min-width: 128px;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  padding: 0.95rem 0.9rem 0.6rem 0.8rem;
+  border: 1px solid var(--tint);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--tint) 12%, transparent);
+  text-align: left;
 }
 
 .node app-icon {
-  font-size: 1.15rem;
-  color: var(--accent);
+  font-size: 1.2rem;
+  color: var(--tint);
 }
 
-.flow.ground .node {
-  background: #2a2a2a;
-  border-color: #555;
+.num {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.6rem;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--tint);
+  color: #111;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.15rem;
+  text-align: center;
 }
 
-.flow.ground .node app-icon {
-  color: var(--text-dim);
+.role {
+  position: absolute;
+  top: -0.5rem;
+  right: 0.6rem;
+  padding: 0 0.4rem;
+  border-radius: 4px;
+  background: var(--panel);
+  color: var(--tint);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1rem;
+  text-transform: uppercase;
 }
 
 .node-label {
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   color: var(--text);
 }
 
 .node-sub {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   color: var(--text-dim);
   margin-top: 2px;
 }
 
 .arrow {
+  flex: none;
   font-size: 1.2rem;
   color: var(--text-dim);
-  padding: 0 0.15rem;
+}
+
+@media (max-width: 640px) {
+  .flow {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.4rem;
+  }
+
+  .step {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .node {
+    height: auto;
+  }
+
+  .arrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
 }

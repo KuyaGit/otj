@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CircuitStage } from '../../data/wiring-data';
 import { IconComponent } from '../icon/icon.component';
 import { IconName } from '../icon/icons';
+import { ROLE_LABEL, StageRole, roleFor } from './flow-roles';
 
 const STAGE_ICON_RULES: [RegExp, IconName][] = [
   [/ground|chassis|\(–\)|negative/i, 'ground'],
@@ -25,24 +26,34 @@ const STAGE_ICON_RULES: [RegExp, IconName][] = [
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
-    <div class="flow" [class.ground]="ground">
-      <ng-container *ngFor="let stage of stages; let last = last">
+    <ol class="flow" [class.ground]="ground">
+      <li class="step" *ngFor="let stage of stages; let i = index; let last = last" [attr.data-role]="roleOf(stage)">
         <div class="node">
+          <span class="num" aria-hidden="true">{{ i + 1 }}</span>
           <app-icon [name]="iconFor(stage)"></app-icon>
           <div class="node-text">
             <div class="node-label">{{ stage.label }}</div>
             <div class="node-sub" *ngIf="stage.sub">{{ stage.sub }}</div>
           </div>
+          <span class="role">{{ roleLabel(stage) }}</span>
         </div>
-        <app-icon class="arrow" name="chevron-right" *ngIf="!last"></app-icon>
-      </ng-container>
-    </div>
+        <app-icon class="arrow" name="chevron-right" *ngIf="!last" aria-hidden="true"></app-icon>
+      </li>
+    </ol>
   `,
   styleUrl: './flow-diagram.component.css',
 })
 export class FlowDiagramComponent {
   @Input() stages: CircuitStage[] = [];
   @Input() ground = false;
+
+  roleOf(stage: CircuitStage): StageRole {
+    return roleFor(stage.label);
+  }
+
+  roleLabel(stage: CircuitStage): string {
+    return ROLE_LABEL[roleFor(stage.label)];
+  }
 
   iconFor(stage: CircuitStage): IconName {
     if (stage.icon) return stage.icon;
