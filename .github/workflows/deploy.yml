@@ -31,10 +31,13 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npx ng build --base-href "/${{ github.event.repository.name }}/"
+        run: npx ng build --base-href "/"
 
       - name: Add .nojekyll
         run: touch dist/jeep-wiring-guide/browser/.nojekyll
+
+      - name: SPA fallback for deep links
+        run: cp dist/jeep-wiring-guide/browser/index.html dist/jeep-wiring-guide/browser/404.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
