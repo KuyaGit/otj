@@ -1,0 +1,132 @@
+<div class="jeepdash" (click)="onContentClick($event)">
+  <header class="head">
+    <div class="eyebrow">Toyota 4K · owner-type jeep · ESP32 digital dash</div>
+    <h1><app-icon name="gauge"></app-icon> JeepDash Build Log</h1>
+    <p class="lede">
+      Ten phases from parts to a working dash with oil, coolant, RPM, battery and fuel alarms. Tick each step as you
+      go. Your progress, notes and calibration values stay saved in this browser.
+    </p>
+  </header>
+
+  <section class="meter" aria-label="Build progress">
+    <div class="meter-row">
+      <span class="meter-num">{{ progress().pct }}%</span>
+      <span class="mono">{{ progress().done }} of {{ progress().total }} steps</span>
+    </div>
+    <div class="track"><div class="fill" [style.width.%]="progress().pct"></div></div>
+    <div class="meter-row">
+      <span class="saved" role="status">{{ savedMsg() }}</span>
+      <div class="toolbar">
+        <button type="button" (click)="copyBackup()">Copy backup</button>
+        <button type="button" (click)="toggleImport()">Restore backup</button>
+        <button type="button" class="danger" (click)="confirmReset.set(true)">Reset progress</button>
+      </div>
+    </div>
+    <div class="confirm" [hidden]="!confirmReset()">
+      <span>Clear every checkmark, note and calibration value?</span>
+      <button type="button" class="danger" (click)="reset()">Yes, clear all</button>
+      <button type="button" (click)="confirmReset.set(false)">Cancel</button>
+    </div>
+    <div class="io" [hidden]="!showImport()">
+      <label class="notes-label" for="import-text">Paste a backup</label>
+      <textarea
+        #importEl
+        id="import-text"
+        placeholder='{"checked":{...},"notes":{...},"cal":{...}}'
+        [value]="importText()"
+        (input)="importText.set(importEl.value)"
+      ></textarea>
+      <div class="toolbar">
+        <button type="button" class="primary" (click)="restore()">Restore</button>
+        <button type="button" (click)="showImport.set(false)">Cancel</button>
+        <span class="saved" role="status">{{ importMsg() }}</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="phases">
+    <section class="phase" *ngFor="let p of phases; let i = index" [id]="'phase-' + p.id">
+      <div class="phase-head">
+        <span class="pnum">{{ (i + 1 < 10 ? '0' : '') + (i + 1) }}</span>
+        <h2>{{ p.title }}</h2>
+        <span class="chip" [class.done]="progress().perPhase[p.id].done === progress().perPhase[p.id].total">
+          {{
+            progress().perPhase[p.id].done === progress().perPhase[p.id].total
+              ? 'Done'
+              : progress().perPhase[p.id].done + ' / ' + progress().perPhase[p.id].total
+          }}
+        </span>
+      </div>
+      <p class="why">{{ p.why }}</p>
+      <div class="caution" *ngIf="p.caution"><b>Caution:</b> {{ p.caution }}</div>
+      <ul class="steps">
+        <ng-container *ngFor="let s of p.steps; let j = index">
+          <li class="group" *ngIf="isGroup(s); else item">{{ s.slice(1) }}</li>
+          <ng-template #item>
+            <li>
+              <label [for]="'s-' + stepId(p.id, j)">
+                <input
+                  #cb
+                  type="checkbox"
+                  [id]="'s-' + stepId(p.id, j)"
+                  [checked]="isChecked(stepId(p.id, j))"
+                  (change)="toggleStep(stepId(p.id, j), cb.checked)"
+                />
+                <span [innerHTML]="s"></span>
+              </label>
+            </li>
+          </ng-template>
+        </ng-container>
+      </ul>
+      <label class="notes-label" [for]="'note-' + p.id">Notes</label>
+      <textarea
+        #note
+        [id]="'note-' + p.id"
+        placeholder="Part numbers, where you bought them, what went wrong"
+        [value]="state().notes[p.id] || ''"
+        (input)="setNote(p.id, note.value)"
+      ></textarea>
+    </section>
+  </main>
+
+  <section class="phase" id="calibration">
+    <div class="phase-head"><h2>Calibration values</h2></div>
+    <p class="why">
+      Fill these in during phase 9. Read the raw voltages from the Serial monitor line
+      <code>rawV[a0 a1 a2 a3]</code> at 115200 baud. The code block updates as you type; copy it over the matching
+      lines in <code>src/main.cpp</code>.
+    </p>
+    <div class="cal">
+      <div class="field" *ngFor="let f of calFields">
+        <label [for]="f.id">{{ f.label }}</label>
+        <input
+          #calInput
+          type="number"
+          [step]="f.step"
+          [id]="f.id"
+          [value]="state().cal[f.key]"
+          (input)="setCal(f.key, calInput.value)"
+        />
+        <small>{{ f.hint }}</small>
+      </div>
+    </div>
+    <pre #snippetEl aria-label="Calibration code">{{ snippet() }}</pre>
+    <div class="toolbar">
+      <button type="button" class="primary" (click)="copySnippet()">Copy code</button>
+      <span class="saved" role="status">{{ snippetMsg() }}</span>
+    </div>
+    <label class="notes-label" for="note-cal">Calibration notes</label>
+    <textarea
+      #calNote
+      id="note-cal"
+      placeholder="Coolant read 92 °C, thermometer 94 °C at hot idle"
+      [value]="state().notes['cal'] || ''"
+      (input)="setNote('cal', calNote.value)"
+    ></textarea>
+  </section>
+
+  <p class="foot">
+    Progress is stored with <code>localStorage</code> under the key <code>jeepdash-guide-v1</code>. It stays on this
+    device and browser only, so use Copy backup before switching phones or clearing browser data.
+  </p>
+</div>

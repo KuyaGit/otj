@@ -31,6 +31,10 @@
   gap: 0.25rem;
 }
 
+.hero-link + .hero-link {
+  margin-left: 1.25rem;
+}
+
 .hero-link:hover {
   text-decoration: underline;
 }
