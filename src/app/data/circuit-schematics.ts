@@ -162,6 +162,15 @@ export const CIRCUIT_SCHEMATICS: Record<string, SchBranch[]> = {
     ...lampsOn('TURN', ['Front lamp L', 'Front lamp R', 'Rear lamp L', 'Rear lamp R']),
   ],
 
+  'hazard-lights': [
+    BATTERY,
+    { top: '+12V BATT', parts: [p('fuse', 'F1', '15A'), p('load', 'LD1', 'Hazard flasher')], bottom: 'HAZARD', wired: true },
+    { top: 'HAZARD', parts: [p('switch', 'SW1A', 'Hazard sw. left')], bottom: 'TURN L', wired: true },
+    { top: 'HAZARD', parts: [p('switch', 'SW1B', 'Hazard sw. right')], bottom: 'TURN R', wired: true },
+    { top: 'TURN L', parts: [p('lamp', 'LP1', 'Left lamps F/R')], bottom: 'GND' },
+    { top: 'TURN R', parts: [p('lamp', 'LP2', 'Right lamps F/R')], bottom: 'GND' },
+  ],
+
   horn: [
     BATTERY,
     ...relay(

@@ -33,11 +33,12 @@ export const MAP_NODES: Record<string, MapNode> = {
   ignSwitch: { label: 'Ignition switch', pos: [-0.3, 1.0, 0.25], kind: 'switch', desc: 'Ignition switch. It only triggers relays and switched circuits and should never carry starter or heavy load current.' },
   colSwitch: { label: 'Column switches (lights, turn)', pos: [-0.3, 1.08, 0.22], kind: 'switch', desc: 'Steering column light and turn-signal switches. The headlight switch only triggers the relays, it does not carry lamp current.' },
   brakeSwitch: { label: 'Brake pedal switch', pos: [-0.38, 0.65, 0.2], kind: 'switch', desc: 'Brake pedal switch. It feeds the brake lamps on 16 AWG with a 10A fuse.' },
+  hazardSwitch: { label: 'Hazard switch', pos: [-0.15, 1.12, 0.32], kind: 'switch', desc: 'Dash hazard switch (multi-pole). Fed constant power from a 15A fuse through a heavy-duty flasher; when pressed it cuts the turn flasher and flashes both sides on 16 AWG.' },
 
   headL: { label: 'Headlight L', pos: [-0.55, 0.95, 1.8], kind: 'load', desc: 'Left headlamp. Low and high beam are fed through separate 12 AWG, 20A relay circuits.' },
   headR: { label: 'Headlight R', pos: [0.55, 0.95, 1.8], kind: 'load', desc: 'Right headlamp. Low and high beam are fed through separate 12 AWG, 20A relay circuits.' },
-  turnFL: { label: 'Front turn lamp L', pos: [-0.7, 0.9, 1.78], kind: 'load', desc: 'Left front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A (15A if the hazard load needs it).' },
-  turnFR: { label: 'Front turn lamp R', pos: [0.7, 0.9, 1.78], kind: 'load', desc: 'Right front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A (15A if the hazard load needs it).' },
+  turnFL: { label: 'Front turn lamp L', pos: [-0.7, 0.9, 1.78], kind: 'load', desc: 'Left front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A. The hazard switch also feeds it on the 15A hazard circuit.' },
+  turnFR: { label: 'Front turn lamp R', pos: [0.7, 0.9, 1.78], kind: 'load', desc: 'Right front turn lamp, fed through the flasher and turn switch on 16 AWG, 10A. The hazard switch also feeds it on the 15A hazard circuit.' },
   horn: { label: 'Horn', pos: [0.35, 0.8, 1.6], kind: 'load', desc: 'Horn, switched by a relay on 12 AWG with a 20A fuse. The horn button only triggers the relay.' },
   fan: { label: 'Radiator fan', pos: [0.0, 0.85, 1.55], kind: 'load', desc: 'Electric radiator fan. Size the wire and fuse to the fan current (14–10 AWG, 15–40A) and drive it through a relay.' },
   wiperMotor: { label: 'Wiper motor', pos: [0.05, 1.18, 0.62], kind: 'load', desc: 'Wiper motor on 14 AWG with a 15–20A fuse. Follow the motor manufacturer specification if you have it.' },
@@ -170,6 +171,13 @@ export const MAP_ROUTES: Record<string, Leg[]> = {
     { from: 'colSwitch', to: 'tailL', via: ['dashLeft', ...REAR_TRUNK], kind: 'switched' },
     { from: 'colSwitch', to: 'tailR', via: ['dashLeft', ...REAR_TRUNK_R], kind: 'switched' },
   ],
+  'hazard-lights': [
+    { from: 'fuseBox', to: 'hazardSwitch', via: ['dashLeft'], kind: 'feed' },
+    { from: 'hazardSwitch', to: 'turnFL', via: ['dashLeft', 'firewallL', 'engineTop'], kind: 'switched' },
+    { from: 'hazardSwitch', to: 'turnFR', via: ['dashLeft', 'firewallL', 'engineTop', 'frontCross'], kind: 'switched' },
+    { from: 'hazardSwitch', to: 'tailL', via: ['dashLeft', ...REAR_TRUNK], kind: 'switched' },
+    { from: 'hazardSwitch', to: 'tailR', via: ['dashLeft', ...REAR_TRUNK_R], kind: 'switched' },
+  ],
   horn: [
     { from: 'fuseBox', to: 'horn', via: ['firewallL', 'engineTop'], kind: 'feed' },
     { from: 'horn', to: 'groundChassis', kind: 'ground' },
@@ -218,6 +226,7 @@ const CIRCUIT_COLOR_NAME: Record<string, string> = {
   'tail-park': 'Brown',
   'brake-lights': 'White',
   'turn-signals': 'Green',
+  'hazard-lights': 'Green',
   amplifier: 'Red',
   gauges: 'Gray',
 };

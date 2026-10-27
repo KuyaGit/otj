@@ -305,7 +305,34 @@ export const CIRCUITS: Circuit[] = [
       { label: 'Turn signal switch' },
       { label: 'Left / right lamps' },
     ],
-    notes: ['Hazard circuit can use 15A if the total lamp load requires it.'],
+    notes: ['Hazards are wired as their own circuit with a dash switch: see Hazard Lights.'],
+  },
+  {
+    id: 'hazard-lights',
+    name: 'Hazard Lights (Dash Switch)',
+    category: 'signals',
+    wireGauge: '16 AWG',
+    fuse: '15A',
+    icon: 'hazard',
+    diagram: [
+      { label: 'Battery (+)' },
+      { label: '15A fuse', sub: 'constant power, works with the key off' },
+      { label: 'Hazard flasher', sub: 'heavy-duty / electronic, rated for 4+ lamps' },
+      { label: 'Hazard switch', sub: 'multi-pole, on the dash' },
+      { label: 'Left + right turn lamps' },
+    ],
+    notes: [
+      'The feed is constant battery power, not ignition-switched, so the hazards work with the key off.',
+      'The multi-pole switch does two jobs. One pole disconnects the turn flasher, and the other poles connect the hazard flasher to both the left and right lamp lines, so the two flashers never back-feed each other.',
+      'Use a heavy-duty or electronic (LED-compatible) flasher rated for the full lamp count. A standard turn flasher will blink fast or not at all.',
+      'The lamp wiring is the same green 16 AWG as the turn signals (see Turn Signals). The switch only taps those wires.',
+    ],
+    table: [
+      { label: 'Battery → fuse → flasher', wire: '16 AWG', fuse: '15A' },
+      { label: 'Flasher → hazard switch', wire: '16 AWG', fuse: '—' },
+      { label: 'Switch → left lamps', wire: '16 AWG', fuse: '—' },
+      { label: 'Switch → right lamps', wire: '16 AWG', fuse: '—' },
+    ],
   },
   {
     id: 'horn',
@@ -443,7 +470,7 @@ export const FUSE_PANEL: { slot: number; amps: string; label: string }[] = [
   { slot: 12, amps: '10A', label: 'RADIO' },
   { slot: 13, amps: '5A', label: 'INTERIOR LIGHT' },
   { slot: 14, amps: '10A', label: 'LED ACCESSORY' },
-  { slot: 15, amps: '10A', label: 'ACCESSORY' },
+  { slot: 15, amps: '15A', label: 'HAZARD' },
   { slot: 16, amps: '10A', label: 'ACCESSORY' },
 ];
 

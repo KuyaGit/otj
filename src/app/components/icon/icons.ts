@@ -24,6 +24,7 @@ export const ICONS = {
   taillight: ['M14 8h6v8h-6z', 'M8 9h6v6H8z', 'M4 12h4'],
   brake: ['M12 2a10 10 0 1 0 10 10', 'M12 2v10l7 7'],
   'turn-signal': ['M3 12h6', 'M9 8l4 4-4 4', 'M14 8h4l3 4-3 4h-4'],
+  hazard: ['M12 3l10 18H2z', 'M12 9l4.5 8h-9z'],
   socket: ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z', 'M9 10v4', 'M12 9v6', 'M15 10v4'],
   'dome-light': ['M4 20h16', 'M6 20a6 6 0 0 1 12 0', 'M9 20V14', 'M15 20V14', 'M8 14h8l-1-4H9z'],
   wiper: ['M12 21V9', 'M12 9a5 5 0 0 1 5-5', 'M17 4v3', 'M8 21c0-4 2-7 4-8'],
