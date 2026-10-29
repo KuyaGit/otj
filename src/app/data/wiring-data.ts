@@ -21,6 +21,21 @@ export interface RelayWiring {
   notes?: string[];
 }
 
+// One terminal of a turn-signal flasher unit. DIN 72552 numbers them 49 (input), 49a (output to the
+// lamps) and 31 (ground); units often print them as B, L and E or P instead.
+export interface FlasherPin {
+  pin: '49' | '49a' | '31';
+  role: string;
+  connect: string;
+  wire: string;
+  fuse: string;
+}
+
+export interface FlasherWiring {
+  pins: FlasherPin[];
+  notes?: string[];
+}
+
 export interface Circuit {
   id: string;
   name: string;
@@ -29,6 +44,7 @@ export interface Circuit {
   fuse: string;
   icon?: IconName;
   relay?: RelayWiring;
+  flasher?: FlasherWiring;
   diagram: CircuitStage[];
   groundDiagram?: CircuitStage[];
   notes?: string[];
@@ -62,6 +78,24 @@ function relayWiring(o: {
       { pin: '87a', role: 'Normally closed', connect: 'Not used. Leave it empty (a 4-pin relay has no 87a)', wire: '—', fuse: '—' },
       { pin: '86', role: 'Coil positive (+)', connect: o.coilPlus, wire: coilWire, fuse: '—' },
       { pin: '85', role: 'Coil negative (–)', connect: 'Chassis ground, a clean bare-metal point', wire: coilWire, fuse: '—' },
+    ],
+    notes: o.notes,
+  };
+}
+
+// Pin table for a 3-terminal electronic flasher. A 2-terminal flasher has no ground pin.
+function flasherWiring(o: {
+  supply: string;
+  output: string;
+  wire: string;
+  fuse: string;
+  notes?: string[];
+}): FlasherWiring {
+  return {
+    pins: [
+      { pin: '49', role: 'Input (marked B or 49)', connect: o.supply, wire: o.wire, fuse: o.fuse },
+      { pin: '49a', role: 'Output to the lamps (marked L or 49a)', connect: o.output, wire: o.wire, fuse: 'Covered by the fuse on 49' },
+      { pin: '31', role: 'Ground (marked E, P or 31)', connect: 'Chassis ground, a clean bare-metal point. A 2-pin flasher has no ground pin', wire: o.wire, fuse: '—' },
     ],
     notes: o.notes,
   };
@@ -390,6 +424,13 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '16 AWG',
     fuse: '10A (15A for hazard load)',
     icon: 'turn-signal',
+    flasher: flasherWiring({
+      supply: 'Fuse panel, 10A TURN SIGNAL fuse, ignition-switched +12V',
+      output: 'Turn signal switch, common terminal',
+      wire: '16 AWG',
+      fuse: '10A',
+      notes: ['The flasher only feeds the turn switch. The switch then sends power to the left or right lamp wires.'],
+    }),
     diagram: [
       { label: '10A fuse' },
       { label: 'Flasher' },
@@ -405,6 +446,13 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '16 AWG',
     fuse: '15A',
     icon: 'hazard',
+    flasher: flasherWiring({
+      supply: 'Fuse panel, 15A HAZARD fuse, constant battery +12V (so it works with the key off)',
+      output: 'Hazard switch, flasher input pole',
+      wire: '16 AWG',
+      fuse: '15A',
+      notes: ['This is a second flasher, separate from the turn signal one. Use a heavy-duty or electronic one rated for all four lamps.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: '15A fuse', sub: 'constant power, works with the key off' },

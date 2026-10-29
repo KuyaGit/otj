@@ -64,6 +64,10 @@ netlist outputs are locked by golden hashes in `schematic.spec.ts`: change them 
 shows a 5-pin pinout and a pin-by-pin table (`components/relay-pinout`), with coil polarity per DIN 72552
 (85 negative, 86 positive). `data/relay-wiring.spec.ts` fails if a circuit's schematic has a relay and `relay` is missing.
 
+**Flashers:** the turn signal and hazard circuits set `flasher: flasherWiring({...})` the same way, giving a 3-pin
+pinout and table (`components/flasher-pinout`, DIN 72552: 49 input, 49a output, 31 ground).
+`data/flasher-wiring.spec.ts` fails if a schematic has a part named "flasher" and `flasher` is missing.
+
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`
 and be reachable at `/accessory/<id>` — no route or page changes needed. Also add a `MAP_ROUTES` entry

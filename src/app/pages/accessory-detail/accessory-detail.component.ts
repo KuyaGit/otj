@@ -6,13 +6,14 @@ import { FlowDiagramComponent } from '../../components/flow-diagram/flow-diagram
 import { IconComponent } from '../../components/icon/icon.component';
 import { SchematicComponent } from '../../components/schematic/schematic.component';
 import { RelayPinoutComponent } from '../../components/relay-pinout/relay-pinout.component';
+import { FlasherPinoutComponent } from '../../components/flasher-pinout/flasher-pinout.component';
 import { CIRCUIT_SCHEMATICS } from '../../data/circuit-schematics';
 import { IconName } from '../../components/icon/icons';
 
 @Component({
   selector: 'app-accessory-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FlowDiagramComponent, IconComponent, SchematicComponent, RelayPinoutComponent],
+  imports: [CommonModule, RouterLink, FlowDiagramComponent, IconComponent, SchematicComponent, RelayPinoutComponent, FlasherPinoutComponent],
   templateUrl: './accessory-detail.component.html',
   styleUrl: './accessory-detail.component.css',
 })

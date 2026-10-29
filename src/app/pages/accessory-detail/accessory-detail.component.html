@@ -29,6 +29,11 @@
     <app-relay-pinout [wiring]="circuit.relay"></app-relay-pinout>
   </ng-container>
 
+  <ng-container *ngIf="circuit.flasher">
+    <h3 id="flasher">Flasher Pin Connections</h3>
+    <app-flasher-pinout [wiring]="circuit.flasher"></app-flasher-pinout>
+  </ng-container>
+
   <ng-container *ngIf="schematics[circuit.id]">
     <h3 id="schematic">KiCad Schematic</h3>
     <app-schematic [circuit]="circuit"></app-schematic>

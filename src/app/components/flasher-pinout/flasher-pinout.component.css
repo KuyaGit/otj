@@ -1,0 +1,9 @@
+.relay {
+  --out: #ffb300;
+}
+
+.pin.out { fill: var(--out); }
+.lead.out { stroke: var(--out); }
+.num.out { fill: var(--out); }
+
+.row[data-kind='out'] { --tag: var(--out); }
