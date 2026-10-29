@@ -6,6 +6,21 @@ export interface CircuitStage {
   icon?: IconName;
 }
 
+// One terminal of a 5-pin automotive relay. Coil polarity follows DIN 72552: 85 is coil negative
+// (to ground) and 86 is coil positive (from the switch).
+export interface RelayPin {
+  pin: '85' | '86' | '30' | '87' | '87a';
+  role: string;
+  connect: string;
+  wire: string;
+  fuse: string;
+}
+
+export interface RelayWiring {
+  pins: RelayPin[];
+  notes?: string[];
+}
+
 export interface Circuit {
   id: string;
   name: string;
@@ -13,6 +28,7 @@ export interface Circuit {
   wireGauge: string;
   fuse: string;
   icon?: IconName;
+  relay?: RelayWiring;
   diagram: CircuitStage[];
   groundDiagram?: CircuitStage[];
   notes?: string[];
@@ -23,6 +39,32 @@ export interface Category {
   id: string;
   name: string;
   icon: IconName;
+}
+
+// Pin table for a normally-open relay: power in on 30, power out on 87, switch on the coil, 87a unused.
+// The guide only gives a coil wire gauge for the starter, so the default is the usual 16-18 AWG.
+const COIL_WIRE = '16–18 AWG (typical)';
+
+function relayWiring(o: {
+  coilPlus: string;
+  coilWire?: string;
+  supply: string;
+  supplyWire: string;
+  fuse: string;
+  load: string;
+  notes?: string[];
+}): RelayWiring {
+  const coilWire = o.coilWire ?? COIL_WIRE;
+  return {
+    pins: [
+      { pin: '30', role: 'Common (power in)', connect: o.supply, wire: o.supplyWire, fuse: o.fuse },
+      { pin: '87', role: 'Normally open (power out)', connect: o.load, wire: o.supplyWire, fuse: 'Covered by the fuse on 30' },
+      { pin: '87a', role: 'Normally closed', connect: 'Not used. Leave it empty (a 4-pin relay has no 87a)', wire: '—', fuse: '—' },
+      { pin: '86', role: 'Coil positive (+)', connect: o.coilPlus, wire: coilWire, fuse: '—' },
+      { pin: '85', role: 'Coil negative (–)', connect: 'Chassis ground, a clean bare-metal point', wire: coilWire, fuse: '—' },
+    ],
+    notes: o.notes,
+  };
 }
 
 export const CATEGORIES: Category[] = [
@@ -151,6 +193,15 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '2–4 AWG (battery to starter B+)',
     fuse: 'Usually no conventional fuse',
     icon: 'starter',
+    relay: relayWiring({
+      coilPlus: 'Ignition switch, START terminal',
+      coilWire: '14–16 AWG',
+      supply: 'Battery (+)',
+      supplyWire: '14–16 AWG',
+      fuse: '— (the guide gives no fuse for this circuit)',
+      load: 'Starter solenoid trigger terminal',
+      notes: ['The heavy 2–4 AWG cable goes straight from the battery to the starter B+ terminal. The relay only triggers the solenoid, it never carries starter motor current.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Heavy cable', sub: '2–4 AWG' },
@@ -169,6 +220,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '14–16 AWG (see breakdown)',
     fuse: '10–15A per sub-circuit',
     icon: 'spark',
+    relay: relayWiring({
+      coilPlus: 'Ignition switch (+12V IGN)',
+      supply: 'Battery (+)',
+      supplyWire: '14 AWG',
+      fuse: '15A',
+      load: 'Coil, module, distributor and choke feeds',
+      notes: ['Split the output after pin 87 into the sub-circuits: coil 14 AWG / 10–15A, module 16 AWG / 10A, distributor 16 AWG / 10A, electric choke 16 AWG / 10A.'],
+    }),
     diagram: [
       { label: 'Ignition switch' },
       { label: 'Ignition relay', sub: '14 AWG · 15A fuse' },
@@ -189,6 +248,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '16–12 AWG (by pump current)',
     fuse: '7.5–20A (by pump current)',
     icon: 'pump',
+    relay: relayWiring({
+      coilPlus: 'Ignition switch (+12V IGN)',
+      supply: 'Battery (+)',
+      supplyWire: '16–12 AWG (by pump current)',
+      fuse: '7.5–20A (by pump current)',
+      load: 'Fuel pump (+)',
+      notes: ['The pump (–) wire goes to chassis ground, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Fuse', sub: 'per pump size' },
@@ -210,6 +277,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '12 AWG',
     fuse: '20A',
     icon: 'headlight-low',
+    relay: relayWiring({
+      coilPlus: 'Headlight switch, low-beam position',
+      supply: 'Battery (+)',
+      supplyWire: '12 AWG',
+      fuse: '20A',
+      load: 'Left and right low-beam lamps (+)',
+      notes: ['Each lamp ground goes to a clean chassis point, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -225,6 +300,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '12 AWG',
     fuse: '20A',
     icon: 'headlight-high',
+    relay: relayWiring({
+      coilPlus: 'Headlight switch, high-beam position',
+      supply: 'Battery (+)',
+      supplyWire: '12 AWG',
+      fuse: '20A',
+      load: 'Left and right high-beam lamps (+)',
+      notes: ['Each lamp ground goes to a clean chassis point, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -240,6 +323,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '16 AWG (14 AWG for long runs / >8A)',
     fuse: '10–15A (by total LED load)',
     icon: 'bulb',
+    relay: relayWiring({
+      coilPlus: 'Dash switch',
+      supply: 'Battery (+)',
+      supplyWire: '16 AWG (14 AWG for long runs / >8A)',
+      fuse: '10–15A (by total LED load)',
+      load: 'DC-DC stabilizer input if fitted, otherwise the LED lights (+)',
+      notes: ['LED (–) goes to the ground bus, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Fuse', sub: '10–15A, per LED group' },
@@ -341,6 +432,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '12 AWG',
     fuse: '20A',
     icon: 'horn',
+    relay: relayWiring({
+      coilPlus: 'Horn button',
+      supply: 'Battery (+)',
+      supplyWire: '12 AWG',
+      fuse: '20A',
+      load: 'Horn (+)',
+      notes: ['The horn (–) wire goes to chassis ground, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: '20A fuse' },
@@ -357,6 +456,14 @@ export const CIRCUITS: Circuit[] = [
     wireGauge: '14–10 AWG (by fan current)',
     fuse: '15–40A (by fan current)',
     icon: 'fan',
+    relay: relayWiring({
+      coilPlus: 'Fan switch or thermostat switch',
+      supply: 'Battery (+)',
+      supplyWire: '14–10 AWG (by fan current)',
+      fuse: '15–40A (by fan current)',
+      load: 'Fan (+)',
+      notes: ['The fan (–) wire goes to chassis ground, not to the relay.'],
+    }),
     diagram: [
       { label: 'Battery (+)' },
       { label: 'Fuse', sub: 'per fan size' },

@@ -1,0 +1,135 @@
+.relay {
+  --power: #e53935;
+  --coil: #42a5f5;
+  --spare: #9aa0ac;
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  padding: 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.art {
+  width: 100%;
+  height: auto;
+}
+
+.body {
+  fill: color-mix(in srgb, var(--text) 8%, transparent);
+  stroke: var(--text-dim);
+  stroke-width: 2;
+}
+
+.pin.power { fill: var(--power); }
+.pin.coil { fill: var(--coil); }
+.pin.spare { fill: var(--spare); }
+
+.lead {
+  fill: none;
+  stroke-width: 1.5;
+}
+.lead.power { stroke: var(--power); }
+.lead.coil { stroke: var(--coil); }
+.lead.spare { stroke: var(--spare); }
+
+.num {
+  font-size: 24px;
+  font-weight: 700;
+}
+.num.power { fill: var(--power); }
+.num.coil { fill: var(--coil); }
+.num.spare { fill: var(--spare); }
+
+.sub {
+  font-size: 14px;
+  fill: var(--text-dim);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 3.2rem 9.5rem minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.2rem 0.8rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row.head {
+  padding-top: 0;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pin-tag {
+  align-self: start;
+  justify-self: start;
+  min-width: 2.2rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 6px;
+  background: var(--tag);
+  color: #111;
+  font-weight: 700;
+  text-align: center;
+}
+
+.row[data-kind='power'] { --tag: var(--power); }
+.row[data-kind='coil'] { --tag: var(--coil); }
+.row[data-kind='spare'] { --tag: var(--spare); }
+
+.notes {
+  margin: 0.9rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.notes li {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .relay {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .art {
+    max-width: 340px;
+    justify-self: center;
+  }
+
+  /* one card per pin, each value labelled */
+  .row.head {
+    display: none;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.7rem 0;
+  }
+
+  .row span[data-label]:not(.pin-tag)::before {
+    content: attr(data-label) ': ';
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+}

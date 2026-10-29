@@ -60,6 +60,10 @@ from `branchTitle()`, click-a-part explanations from `describePart()`/`PART_HELP
 `legendItems()`. The arrow diagrams tag each stage with a role from `flow-roles.ts`. The `.kicad_sch` and
 netlist outputs are locked by golden hashes in `schematic.spec.ts`: change them only on purpose.
 
+**Relays:** a circuit that uses a relay sets `relay: relayWiring({...})` in `wiring-data.ts`. The circuit page then
+shows a 5-pin pinout and a pin-by-pin table (`components/relay-pinout`), with coil polarity per DIN 72552
+(85 negative, 86 positive). `data/relay-wiring.spec.ts` fails if a circuit's schematic has a relay and `relay` is missing.
+
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`
 and be reachable at `/accessory/<id>` — no route or page changes needed. Also add a `MAP_ROUTES` entry
