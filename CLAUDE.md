@@ -68,6 +68,10 @@ shows a 5-pin pinout and a pin-by-pin table (`components/relay-pinout`), with co
 pinout and table (`components/flasher-pinout`, DIN 72552: 49 input, 49a output, 31 ground).
 `data/flasher-wiring.spec.ts` fails if a schematic has a part named "flasher" and `flasher` is missing.
 
+**Shopping list:** `/shopping` (`pages/shopping-list`) is a tick-off buy list read from `data/shopping-list.ts`.
+Relay and flasher quantities are counted from the circuits' `relay`/`flasher` data. Item ids are the saved-data keys
+(localStorage `jeep-shopping-list-v1`), so rename one only with a new key. Wire lengths are estimates.
+
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`
 and be reachable at `/accessory/<id>` — no route or page changes needed. Also add a `MAP_ROUTES` entry

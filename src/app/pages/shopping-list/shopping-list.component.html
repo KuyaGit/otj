@@ -1,0 +1,67 @@
+<div class="shopping">
+  <header class="head">
+    <div class="eyebrow">Relays · flashers · wire · fuses · hardware</div>
+    <h1><app-icon name="checklist"></app-icon> Shopping List</h1>
+    <p class="lede">
+      Everything to buy for the relay and flasher wiring in this guide. Tick each item as you buy it. Your ticks stay
+      saved in this browser.
+    </p>
+  </header>
+
+  <section class="meter" aria-label="Shopping progress">
+    <div class="meter-row">
+      <span class="meter-num">{{ progress().pct }}%</span>
+      <span class="mono">{{ progress().done }} of {{ progress().total }} items bought</span>
+    </div>
+    <div class="track"><div class="fill" [style.width.%]="progress().pct"></div></div>
+    <div class="meter-row">
+      <span class="saved" role="status">{{ savedMsg() }}</span>
+      <div class="toolbar">
+        <button type="button" class="danger" (click)="confirmReset.set(true)">Clear ticks</button>
+      </div>
+    </div>
+    <div class="confirm" [hidden]="!confirmReset()">
+      <span>Untick every item?</span>
+      <button type="button" class="danger" (click)="reset()">Yes, clear all</button>
+      <button type="button" (click)="confirmReset.set(false)">Cancel</button>
+    </div>
+  </section>
+
+  <ul class="notes">
+    <li *ngFor="let note of notes">{{ note }}</li>
+  </ul>
+
+  <main class="sections">
+    <section class="section" *ngFor="let s of sections" [id]="'shop-' + s.id">
+      <div class="section-head">
+        <h2>{{ s.title }}</h2>
+        <span class="chip" [class.done]="progress().perSection[s.id].done === progress().perSection[s.id].total">
+          {{
+            progress().perSection[s.id].done === progress().perSection[s.id].total
+              ? 'Done'
+              : progress().perSection[s.id].done + ' / ' + progress().perSection[s.id].total
+          }}
+        </span>
+      </div>
+      <p class="why">{{ s.why }}</p>
+      <ul class="items">
+        <li *ngFor="let item of s.items">
+          <label [for]="'i-' + item.id">
+            <input
+              #cb
+              type="checkbox"
+              [id]="'i-' + item.id"
+              [checked]="!!checked()[item.id]"
+              (change)="toggle(item.id, cb.checked)"
+            />
+            <span class="text">
+              <span class="name">{{ item.name }}<span class="tag" *ngIf="item.optional">optional</span></span>
+              <span class="detail" *ngIf="item.detail">{{ item.detail }}</span>
+            </span>
+            <span class="qty">{{ item.qty }}</span>
+          </label>
+        </li>
+      </ul>
+    </section>
+  </main>
+</div>
