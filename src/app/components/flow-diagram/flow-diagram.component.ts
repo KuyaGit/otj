@@ -34,6 +34,7 @@ const STAGE_ICON_RULES: [RegExp, IconName][] = [
           <div class="node-text">
             <div class="node-label">{{ stage.label }}</div>
             <div class="node-sub" *ngIf="stage.sub">{{ stage.sub }}</div>
+            <div class="node-part" *ngIf="parts[i]"><span class="part-tag">Part</span>{{ parts[i] }}</div>
           </div>
           <span class="role">{{ roleLabel(stage) }}</span>
         </div>
@@ -46,6 +47,8 @@ const STAGE_ICON_RULES: [RegExp, IconName][] = [
 export class FlowDiagramComponent {
   @Input() stages: CircuitStage[] = [];
   @Input() ground = false;
+  // the part to buy for each stage, same order as stages (see data/stage-parts.ts)
+  @Input() parts: (string | undefined)[] = [];
 
   roleOf(stage: CircuitStage): StageRole {
     return roleFor(stage.label);

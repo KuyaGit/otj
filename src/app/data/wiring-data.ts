@@ -630,15 +630,13 @@ export const FUSE_PANEL: { slot: number; amps: string; label: string }[] = [
 ];
 
 export const WIRE_COLORS: { color: string; purpose: string; hex: string }[] = [
-  { color: 'Red', purpose: 'Battery + constant', hex: '#d32f2f' },
-  { color: 'Yellow', purpose: 'Ignition-switched +', hex: '#fbc02d' },
+  { color: 'Red', purpose: 'Battery + constant, and accessory feeds', hex: '#d32f2f' },
+  { color: 'Yellow', purpose: 'Ignition-switched +, and the fuel pump', hex: '#fbc02d' },
   { color: 'Black', purpose: 'Ground', hex: '#212121' },
   { color: 'Blue', purpose: 'Headlights', hex: '#1976d2' },
   { color: 'Green', purpose: 'Turn signals', hex: '#388e3c' },
   { color: 'Brown', purpose: 'Tail/park lights', hex: '#795548' },
-  { color: 'White', purpose: 'Brake lights', hex: '#eeeeee' },
-  { color: 'Orange', purpose: 'Accessories', hex: '#f57c00' },
-  { color: 'Purple', purpose: 'Fuel pump', hex: '#7b1fa2' },
+  { color: 'White', purpose: 'Brake lights, and relay coil triggers', hex: '#eeeeee' },
   { color: 'Gray', purpose: 'Gauges', hex: '#757575' },
 ];
 

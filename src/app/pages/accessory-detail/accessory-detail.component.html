@@ -22,7 +22,12 @@
   >
 
   <h3>Wiring Diagram</h3>
-  <app-flow-diagram [stages]="circuit.diagram"></app-flow-diagram>
+  <app-flow-diagram [stages]="circuit.diagram" [parts]="parts"></app-flow-diagram>
+  <p class="wire-key">
+    <span class="swatch" [style.background]="wireHex" aria-hidden="true"></span>
+    Wire: <b>{{ wireText }}</b>. Ground wires are black.
+    <a routerLink="/shopping">See the shopping list</a>
+  </p>
 
   <ng-container *ngIf="circuit.relay">
     <h3 id="relay">Relay Pin Connections</h3>

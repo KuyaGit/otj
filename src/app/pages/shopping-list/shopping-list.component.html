@@ -45,23 +45,35 @@
       </div>
       <p class="why">{{ s.why }}</p>
       <ul class="items">
-        <li *ngFor="let item of s.items">
-          <label [for]="'i-' + item.id">
-            <input
-              #cb
-              type="checkbox"
-              [id]="'i-' + item.id"
-              [checked]="!!checked()[item.id]"
-              (change)="toggle(item.id, cb.checked)"
-            />
-            <span class="text">
-              <span class="name">{{ item.name }}<span class="tag" *ngIf="item.optional">optional</span></span>
-              <span class="detail" *ngIf="item.detail">{{ item.detail }}</span>
-            </span>
-            <span class="qty">{{ item.qty }}</span>
-          </label>
-        </li>
+        <ng-container *ngFor="let item of s.items; let i = index">
+          <li class="group" *ngIf="startsGroup(s.items, i)">{{ item.group }}</li>
+          <li>
+            <label [for]="'i-' + item.id">
+              <input
+                #cb
+                type="checkbox"
+                [id]="'i-' + item.id"
+                [checked]="!!checked()[item.id]"
+                (change)="toggle(item.id, cb.checked)"
+              />
+              <span class="text">
+                <span class="name">
+                  <span class="swatch" *ngIf="item.color" [style.background]="hex(item.color)" aria-hidden="true"></span>
+                  {{ item.name }}<span class="tag" *ngIf="item.optional">optional</span>
+                </span>
+                <span class="detail" *ngIf="item.detail">{{ item.detail }}</span>
+              </span>
+              <span class="qty">{{ item.qty }}</span>
+            </label>
+          </li>
+        </ng-container>
       </ul>
+      <div class="totals" *ngIf="s.id === 'wire'">
+        <span class="totals-label">Total by colour</span>
+        <span class="total" *ngFor="let t of totals">
+          <span class="swatch" [style.background]="hex(t.color)" aria-hidden="true"></span>{{ t.color }} {{ t.meters }} m
+        </span>
+      </div>
     </section>
   </main>
 </div>

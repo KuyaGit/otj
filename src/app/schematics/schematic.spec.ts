@@ -284,26 +284,28 @@ describe('legend', () => {
 // ------------------------------------------------------------ golden outputs
 // The downloads must not change when the page drawing changes. These hashes were taken before the
 // redesign. If you change the file format on purpose, regenerate them.
+// These 8 changed on purpose when the wire colours moved to the six the shop sells (the wire label in
+// the file names the colour, e.g. ORANGE became RED). Only that word differs: the layout is the same.
 const KICAD_FILE_HASH: Record<string, string> = {
   'main-feed': 'a44b8d6bcdfe59a9',
   'charging-system': 'bc87b956af0bb902',
   'big-3-upgrade': '6a47e350672ddaf7',
   'starter': '7c9f07cb297b65c7',
   'ignition-carbureted': '5a3dfa1d5d6bcebf',
-  'fuel-pump': '5fdaccfc930c6829',
+  'fuel-pump': '5d1c784c3eb62304',
   'headlight-low': '194c599ceff27dfa',
   'headlight-high': '47d8b95ab0ae37ea',
-  'led-accessory-power': '0929fa3d783b7f4d',
+  'led-accessory-power': '46e06cc4ece025f3',
   'tail-park': 'c637c88c0335761f',
   'brake-lights': 'f2f396e915745173',
   'turn-signals': '20289991bf26e033',
   'hazard-lights': '97c24f8273b69dfa',
-  'horn': '2bb6310d1c4bf217',
-  'radiator-fan': '49dbf32d15834a79',
-  '12v-socket': '34f82b12f2f52c32',
-  'interior-lights': 'd2d88044b07328db',
-  'wipers': '9bebd2821ef04d91',
-  'radio': '36b44a256bf61110',
+  'horn': '26f2d70871ca6043',
+  'radiator-fan': '5af26acde60ec315',
+  '12v-socket': '1753e2a7eb2f95a6',
+  'interior-lights': 'cc3f2ec7752bfb43',
+  'wipers': 'bee6b21d736fac46',
+  'radio': '61a3574f34899bc9',
   'amplifier': 'bea44ce7aaf8d851',
   'gauges': '0652f3770f64836a',
 };

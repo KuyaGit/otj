@@ -6,6 +6,8 @@ export interface ShopItem {
   qty: string;
   detail?: string;
   optional?: boolean;
+  group?: string;    // a heading shown when it changes, used to group wire by size
+  color?: string;    // a colour name from WIRE_COLORS, shown as a swatch
 }
 
 export interface ShopSection {
@@ -21,11 +23,40 @@ export const SPARE_RELAYS = 2;
 export const RELAY_COUNT = CIRCUITS.filter((c) => c.relay).length;
 export const FLASHER_COUNT = CIRCUITS.filter((c) => c.flasher).length;
 
+// The shop sells every colour in 5 m and 10 m lengths, in these six colours only
+export const SHOP_WIRE_COLORS = ['Black', 'Red', 'Blue', 'Green', 'Yellow', 'White'];
+
+// Round a length up to whole 5 m and 10 m packs, using the fewest packs
+export function wirePacks(meters: number): { total: number; text: string } {
+  const tens = Math.floor(meters / 10);
+  const rest = meters - tens * 10;
+  const tensBought = tens + (rest > 5 ? 1 : 0);
+  const five = rest > 0 && rest <= 5;
+  const parts = [tensBought ? `${tensBought} × 10 m` : '', five ? '1 × 5 m' : ''].filter(Boolean);
+  return { total: tensBought * 10 + (five ? 5 : 0), text: parts.join(' + ') };
+}
+
+// One tickable row per size and colour. `need` is the length the runs use, qty is what to buy.
+const wire = (gauge: number, color: string, need: number, detail: string, optional?: true): ShopItem => {
+  const packs = wirePacks(need);
+  return {
+    id: `wire-${gauge}-${color.toLowerCase()}`,
+    name: `${gauge} AWG wire, ${color.toLowerCase()}`,
+    qty: `${packs.total} m`,
+    detail: `Need about ${need} m, so buy ${packs.text}. ${detail}`,
+    optional,
+    group: `${gauge} AWG`,
+    color,
+  };
+};
+
 export const SHOPPING_NOTES: string[] = [
   'Quantities assume you wire every relay circuit in the guide plus the turn and hazard flashers. Skip anything you are not doing.',
   'Wire lengths: the 126 cm run from the fuse and relay panel to the front lamp is measured. The other runs are estimates from the 3D map, which is illustrative, not measured, so measure the rear lamps, fan and fuel pump before you cut. About 20% slack is included.',
+  'Your shop sells wire in black, red, blue, green, yellow and white, in 5 m and 10 m lengths, so there is no orange or purple and every row is rounded up to whole packs. I assumed every size comes in the same colours, so check the listing for each size. Red is battery and accessory feeds, yellow is ignition-switched and the fuel pump, white is relay coil triggers, blue is headlights, green is turn signals and black is ground.',
   'Prices are left out because they change. Most of these parts are on Shopee or Lazada.',
   'Check the radiator fan current rating before you choose its wire and fuse.',
+  'Grounds are short on purpose: each load grounds at the nearest clean bare-metal body or chassis point. Sand off paint and rust, use a ring terminal with a star washer, then check with a multimeter that the point reads under 0.2V drop to the battery negative (see the Charging System page). The heavy loads, the fan, horn and headlights, need a solid point, so use the chassis or engine strap, not thin body sheet.',
 ];
 
 export const SHOPPING: ShopSection[] = [
@@ -57,39 +88,18 @@ export const SHOPPING: ShopSection[] = [
   {
     id: 'wire',
     title: 'Wire',
-    why: 'Automotive copper wire (GXL, TXL or SAE), not copper-clad aluminium. Colours follow the guide legend. About 20% slack is already added.',
+    why: 'Automotive copper wire (GXL, TXL or SAE), not copper-clad aluminium. One row per size and colour, rounded up to your shop 5 m and 10 m packs. About 20% slack is already added.',
     items: [
-      {
-        id: 'wire-18',
-        name: '18 AWG wire',
-        qty: '16 m',
-        detail: `Relay coil wires, ${RELAY_COUNT} relays. 10 m orange, 6 m black.`,
-      },
-      {
-        id: 'wire-16',
-        name: '16 AWG wire',
-        qty: '23 m',
-        detail: 'Turn signals and hazard, all 4 lamps and the switch links. 20 m green, 3 m black for the lamp grounds.',
-      },
-      {
-        id: 'wire-14',
-        name: '14 AWG wire',
-        qty: '24 m',
-        detail: 'Fuel pump, starter and ignition relays, LED light bar. 10 m orange, 5 m purple, 4 m yellow, 5 m black.',
-      },
-      {
-        id: 'wire-12',
-        name: '12 AWG wire',
-        qty: '25 m',
-        detail: 'Headlights low and high, horn, radiator fan. 13 m blue, 6 m orange, 6 m black.',
-      },
-      {
-        id: 'wire-10',
-        name: '10 AWG wire, red',
-        qty: '3 m',
-        detail: 'Radiator fan, only if it draws over 20A.',
-        optional: true,
-      },
+      wire(18, 'White', 10, 'Relay coil trigger wires, switch to pin 86, for the relays.'),
+      wire(16, 'Green', 20, 'Turn signals and hazard: both flashers, both switches and all 4 lamps.'),
+      wire(16, 'Black', 5, 'Relay coil grounds (pin 85) and turn and hazard lamp grounds, each to the nearest body ground. Skip a lamp that grounds through its metal bracket.'),
+      wire(14, 'Red', 10, 'LED light bar feed, a long run up to the roof, and its relay supply.'),
+      wire(14, 'Yellow', 9, 'Fuel pump feed from the relay to the tank, plus the starter and ignition relay feeds (ignition-switched +).'),
+      wire(14, 'Black', 3, 'Fuel pump ground at the tank and LED light bar ground at its roof mount, each to the nearest body point.'),
+      wire(12, 'Blue', 13, 'Headlights low and high: relay to both lamps.'),
+      wire(12, 'Red', 6, 'Horn and radiator fan feeds.'),
+      wire(12, 'Black', 3, 'Headlight, horn and fan grounds, each to the nearest solid body or chassis point at the front.'),
+      wire(10, 'Red', 3, 'Radiator fan feed, only if it draws over 20A.', true),
     ],
   },
   {
@@ -160,3 +170,13 @@ export const SHOPPING: ShopSection[] = [
     ],
   },
 ];
+
+// Metres to buy per colour across every size, for the wire you must buy (optional wire is left out)
+export function colorTotals(): { color: string; meters: number }[] {
+  const totals = new Map<string, number>();
+  for (const item of SHOPPING.flatMap((s) => s.items)) {
+    if (!item.color || item.optional) continue;
+    totals.set(item.color, (totals.get(item.color) ?? 0) + parseFloat(item.qty));
+  }
+  return [...totals].map(([color, meters]) => ({ color, meters })).sort((a, b) => b.meters - a.meters);
+}

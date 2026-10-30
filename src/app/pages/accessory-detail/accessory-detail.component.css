@@ -129,3 +129,29 @@ h3 {
 .map-link:hover {
   text-decoration: underline;
 }
+
+.wire-key {
+  margin: 0.7rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.wire-key b {
+  color: var(--text);
+}
+
+.wire-key a {
+  margin-left: 0.4rem;
+  color: var(--accent);
+}
+
+/* black wire would vanish on the dark page, so the swatch has a light edge */
+.swatch {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  vertical-align: -1px;
+}

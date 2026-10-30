@@ -262,3 +262,48 @@ ul.items li input:checked ~ .qty {
   text-decoration: line-through;
   text-decoration-color: var(--border);
 }
+
+/* a size heading above each group of wire rows */
+ul.items li.group {
+  border-bottom: none;
+  padding: 0.9rem 0.1rem 0.15rem;
+  font: 600 0.72rem ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* black wire would vanish on the dark page, so every swatch has a light edge */
+.swatch {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  vertical-align: -1px;
+}
+
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  font-size: 0.85rem;
+}
+
+.totals-label {
+  font: 600 0.72rem ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.total {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

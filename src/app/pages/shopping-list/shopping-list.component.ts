@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
-import { SHOPPING, SHOPPING_NOTES } from '../../data/shopping-list';
+import { SHOPPING, SHOPPING_NOTES, ShopItem, colorTotals } from '../../data/shopping-list';
+import { WIRE_COLORS } from '../../data/wiring-data';
 import { IconComponent } from '../../components/icon/icon.component';
 
 // Item ids are the saved-data contract (see data/shopping-list.ts), so a rename needs a new key
@@ -24,6 +25,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   sections = SHOPPING;
   notes = SHOPPING_NOTES;
+  totals = colorTotals();
 
   checked = signal<Record<string, true>>({});
   savedMsg = signal('Saved on this device');
@@ -54,6 +56,16 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.title.setTitle(this.previousTitle);
     this.meta.removeTag('name="description"');
+  }
+
+  // the swatch colour comes from the guide wire legend, so a colour is never defined twice
+  hex(color: string): string {
+    return WIRE_COLORS.find((c) => c.color === color)?.hex ?? 'transparent';
+  }
+
+  // a size heading goes above the first row of each group
+  startsGroup(items: ShopItem[], i: number): boolean {
+    return !!items[i].group && items[i].group !== items[i - 1]?.group;
   }
 
   toggle(id: string, on: boolean): void {

@@ -70,7 +70,9 @@ pinout and table (`components/flasher-pinout`, DIN 72552: 49 input, 49a output, 
 
 **Shopping list:** `/shopping` (`pages/shopping-list`) is a tick-off buy list read from `data/shopping-list.ts`.
 Relay and flasher quantities are counted from the circuits' `relay`/`flasher` data. Item ids are the saved-data keys
-(localStorage `jeep-shopping-list-v1`), so rename one only with a new key. Wire lengths are estimates.
+(localStorage `jeep-shopping-list-v1`), so rename one only with a new key. Wire lengths are estimates. Wire is one row
+per size and colour (`wire-<gauge>-<colour>`), with colours from `WIRE_COLORS`. The "Part" line in each arrow-diagram box
+comes from `data/stage-parts.ts`, which works the part out from the box label, so a new circuit needs no extra field.
 
 When adding a new circuit/accessory: add an entry to `CIRCUITS` in `wiring-data.ts` (with a unique
 `id` used in the route), and it will automatically appear on the home page under its `category`

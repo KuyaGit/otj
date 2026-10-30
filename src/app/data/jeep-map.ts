@@ -219,10 +219,10 @@ const CIRCUIT_COLOR_NAME: Record<string, string> = {
   'big-3-upgrade': 'Red',
   starter: 'Red',
   'ignition-carbureted': 'Yellow',
-  'fuel-pump': 'Purple',
+  'fuel-pump': 'Yellow',
   'headlight-low': 'Blue',
   'headlight-high': 'Blue',
-  'led-accessory-power': 'Orange',
+  'led-accessory-power': 'Red',
   'tail-park': 'Brown',
   'brake-lights': 'White',
   'turn-signals': 'Green',
@@ -235,12 +235,12 @@ const CIRCUIT_COLOR_NAME: Record<string, string> = {
 export const GROUND_WIRE_COLOR = '#b0b6c0';
 
 export function wireColorNameFor(circuitId: string): string {
-  return CIRCUIT_COLOR_NAME[circuitId] ?? 'Orange';
+  return CIRCUIT_COLOR_NAME[circuitId] ?? 'Red';   // accessory feeds come off constant battery power
 }
 
 export function wireColorFor(circuitId: string): string {
   const name = wireColorNameFor(circuitId);
-  return WIRE_COLORS.find((c) => c.color === name)?.hex ?? '#f57c00';
+  return WIRE_COLORS.find((c) => c.color === name)?.hex ?? '#d32f2f';
 }
 
 // Tube radius in scene metres from a gauge string such as "14–10 AWG (by fan current)". Takes the

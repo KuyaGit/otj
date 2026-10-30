@@ -93,7 +93,7 @@ describe('part details', () => {
   it('draws ground wires black and names the circuit colour for the rest', () => {
     const horn = connectionsFor('horn').find((c) => c.circuitId === 'horn')!;
     expect(horn.links.find((l) => l.kind === 'ground')!.colorName).toBe('Black');
-    expect(horn.links.find((l) => l.kind === 'feed')!.colorName).toBe('Orange');
+    expect(horn.links.find((l) => l.kind === 'feed')!.colorName).toBe('Red');
   });
 
   it('returns nothing for an unknown part', () => {
